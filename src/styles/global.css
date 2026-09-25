@@ -4,7 +4,7 @@ body,
   width: 100%;
   height: 100%;
   margin: 0;
-  overflow: hidden;
+
 }
 
 body {
@@ -46,3 +46,8 @@ body {
 #webgl-fallback[hidden] {
   display: none !important;
 }
+
+#app canvas { touch-action: pan-y; cursor: grab; }
+#app canvas:active { cursor: grabbing; }
+#map-explore { display:none; position:fixed; bottom:24px; left:50%; transform:translateX(-50%); z-index:5; border:1px solid #d4d4c6; border-radius:24px; padding:12px 22px; background:#fff9ec; color:#314742; font:600 14px system-ui; box-shadow:0 4px 20px #20383022; }
+@media (pointer:coarse) { #map-explore { display:block; } }

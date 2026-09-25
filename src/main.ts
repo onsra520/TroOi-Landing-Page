@@ -14,6 +14,7 @@ async function start(): Promise<void> {
   const experience = await bootstrap(() => new Experience(appHost, assets));
   if (!experience || !new URLSearchParams(window.location.search).has('debug3d')) return;
 
+  (window as unknown as {__trooiQA: unknown}).__trooiQA = {panBy:(x:number,z:number)=>experience.panBy(x,z),snapshot:()=>experience.snapshot(),stats:()=>experience.getRenderStats(),setInputEnabled:(v:boolean)=>experience.setInputEnabled(v)};
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
       const stats = experience.getRenderStats();
