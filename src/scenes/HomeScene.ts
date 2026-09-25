@@ -1,3 +1,5 @@
+import { ClusterLibrary } from '../world/clusters/ClusterLibrary';
+import { ClusterPrototypes } from '../world/clusters/ClusterPrototypes';
 import {
   Color,
   DirectionalLight,
@@ -46,6 +48,15 @@ export class HomeScene {
     this.scene.add(key);
 
     this.town = new Town(assets);
+    if (import.meta.env.DEV && typeof location !== 'undefined' && new URLSearchParams(location.search).has('clusterPreview')) {
+      const prototypes = new ClusterPrototypes(assets);
+      const definitions = new ClusterLibrary();
+      const blocks = this.town.root.getObjectByName('blocks');
+      blocks?.children.forEach((block,index) => {
+        block.clear();
+        block.add(prototypes.get(definitions.resolve({x:index%9,z:Math.floor(index/9)})).clone(true));
+      });
+    }
     this.configureTownShadows(this.town.root);
     this.scene.add(this.town.root);
   }
