@@ -35,3 +35,8 @@ it('owns a scene and accepts frame updates', () => {
   expect(home.scene.isScene).toBe(true);
   expect(() => home.update(0.016, 1)).not.toThrow();
 });
+
+it('composes the town into the home scene', () => {
+  const home = new HomeScene();
+  expect(home.scene.getObjectByName('town')).toBeTruthy();
+});

@@ -35,3 +35,16 @@ describe('createTownLayout', () => {
     expect(() => createTownLayout({ seed: 520, size: 4 as 5 })).toThrow(RangeError);
   });
 });
+
+it('supports authored anchor blocks for art direction', () => {
+  const layout = createTownLayout({
+    seed: 520,
+    size: 5,
+    overrides: [
+      { gridX: 0, gridZ: 0, variant: 'anchor', buildingSeed: 52001 },
+      { gridX: 1, gridZ: 0, variant: 'anchor', buildingSeed: 52002 },
+    ],
+  });
+
+  expect(layout.filter((block) => block.variant === 'anchor').length).toBeGreaterThanOrEqual(2);
+});
