@@ -1,10 +1,21 @@
 // @vitest-environment jsdom
-import { Fog } from 'three';
+import { Fog, Group } from 'three';
 import { expect, it, vi } from 'vitest';
 import { Camera } from '../core/Camera';
 import { Sizes } from '../core/Sizes';
 import { Time } from '../core/Time';
 import { HomeScene } from '../scenes/HomeScene';
+import type { AssetId, AssetProvider } from '../world/resources/assetTypes';
+
+const fakeAssets: AssetProvider = {
+  preload: async () => undefined,
+  has: () => true,
+  clone(id: AssetId) {
+    const root = new Group();
+    root.name = `vendor:${id}`;
+    return root;
+  },
+};
 
 it('updates camera projection for viewport resize', () => {
   const camera = new Camera(1600, 900);
@@ -32,19 +43,17 @@ it('tracks delta and elapsed time from supplied timestamps', () => {
 });
 
 it('owns a scene and accepts frame updates', () => {
-  const home = new HomeScene();
+  const home = new HomeScene(fakeAssets);
   expect(home.scene.isScene).toBe(true);
   expect(() => home.update(0.016, 1)).not.toThrow();
 });
 
 it('composes the town into the home scene', () => {
-  const home = new HomeScene();
+  const home = new HomeScene(fakeAssets);
   expect(home.scene.getObjectByName('town')).toBeTruthy();
 });
-
-
 it('uses near fog to conceal the finite town boundary', () => {
-  const home = new HomeScene();
+  const home = new HomeScene(fakeAssets);
   expect(home.scene.fog).toBeInstanceOf(Fog);
   const fog = home.scene.fog as Fog;
   expect(fog.near).toBe(55);

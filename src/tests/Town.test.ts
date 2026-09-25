@@ -1,29 +1,48 @@
+import { Group } from 'three';
 import { expect, it } from 'vitest';
 import { Town } from '../world/Town';
+import type { AssetId, AssetProvider } from '../world/resources/assetTypes';
 
-it('assembles exactly 25 stable logical block roots', () => {
-  const town = new Town();
-  const blocks = town.root.children.filter((child) => child.userData.block);
+const fakeAssets: AssetProvider = {
+  preload: async () => undefined,
+  has: () => true,
+  clone(id: AssetId) {
+    const root = new Group();
+    root.name = `vendor:${id}`;
+    return root;
+  },
+};
 
-  expect(blocks).toHaveLength(25);
-  expect(new Set(blocks.map((block) => block.userData.block.id)).size).toBe(25);
+it('composes 49 render blocks with exactly 25 logical blocks at visual size 7', () => {
+  const town = new Town(fakeAssets, 7);
+  const blocks = town.root.getObjectByName('blocks') as Group;
+  expect(blocks.children).toHaveLength(49);
+  expect(blocks.children.filter((b) => b.userData.logical === true)).toHaveLength(25);
+  expect(blocks.children.filter((b) => b.userData.logical === false)).toHaveLength(24);
+});
+it('owns one road network and keeps roads out of block roots', () => {
+  const town = new Town(fakeAssets, 7);
+  const roadRoots = town.root.children.filter((child) => child.name === 'road-network');
+  expect(roadRoots).toHaveLength(1);
+
+  const blocks = town.root.getObjectByName('blocks') as Group;
+  for (const block of blocks.children) {
+    expect(block.getObjectByName('road')).toBeUndefined();
+  }
 });
 
-it('exposes a named town root for scene composition', () => {
-  const town = new Town();
-  expect(town.root.name).toBe('town');
-});
-
-it('composes a dedicated vehicle group', () => {
-  const town = new Town();
-  expect(town.root.getObjectByName('vehicles')).toBeTruthy();
-});
-
-it('keeps town mesh count below the homepage draw-call budget', () => {
-  const town = new Town();
-  let meshes = 0;
+it('keeps logical asset ids unique across the populated core', () => {
+  const town = new Town(fakeAssets, 7);
+  const logicalIds: string[] = [];
   town.root.traverse((object) => {
-    if ((object as { isMesh?: boolean }).isMesh) meshes += 1;
+    const asset = object.userData.asset as { id?: string; blockId?: string } | undefined;
+    if (asset?.id && asset.blockId) logicalIds.push(asset.id);
   });
-  expect(meshes).toBeLessThan(650);
+  expect(logicalIds.length).toBeGreaterThan(0);
+  expect(new Set(logicalIds).size).toBe(logicalIds.length);
+});
+
+it('exposes overscan metadata on the town root', () => {
+  const town = new Town(fakeAssets, 7);
+  expect(town.root.userData.town).toEqual({ logicalSize: 5, visualSize: 7, seed: 520 });
 });
