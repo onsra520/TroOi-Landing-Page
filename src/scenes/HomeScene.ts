@@ -9,7 +9,7 @@ export class HomeScene {
   constructor() {
     const background = new Color(colors.sky);
     this.scene.background = background;
-    this.scene.fog = new Fog(background, 38, 68);
+    this.scene.fog = new Fog(background, 55, 95);
 
     const ambient = new HemisphereLight(0xffffff, 0x71806a, 2.25);
     this.scene.add(ambient);

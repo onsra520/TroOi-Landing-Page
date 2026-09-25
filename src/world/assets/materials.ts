@@ -1,13 +1,13 @@
 import { MeshStandardMaterial } from 'three';
 
 export const colors = {
-  sky: 0xd8e8d4,
-  road: 0xaeb9ae,
-  sidewalk: 0xe8e3d2,
-  grass: 0xa9c985,
+  sky: 0xd6e6d1,
+  road: 0x686b70,
+  sidewalk: 0xeeeae0,
+  grass: 0x9fce68,
   trunk: 0x8f6b4f,
-  foliage: 0x6f9d67,
-  window: 0x45656b,
+  foliage: 0x649c57,
+  window: 0x355b63,
 } as const;
 
 export const materials = {

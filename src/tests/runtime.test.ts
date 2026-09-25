@@ -1,4 +1,5 @@
 // @vitest-environment jsdom
+import { Fog } from 'three';
 import { expect, it, vi } from 'vitest';
 import { Camera } from '../core/Camera';
 import { Sizes } from '../core/Sizes';
@@ -9,7 +10,7 @@ it('updates camera projection for viewport resize', () => {
   const camera = new Camera(1600, 900);
   camera.resize(390, 844);
   expect(camera.instance.aspect).toBeCloseTo(390 / 844);
-  expect(camera.instance.fov).toBe(36);
+  expect(camera.instance.fov).toBe(30);
 });
 
 it('publishes viewport changes and capped DPR', () => {
@@ -39,4 +40,13 @@ it('owns a scene and accepts frame updates', () => {
 it('composes the town into the home scene', () => {
   const home = new HomeScene();
   expect(home.scene.getObjectByName('town')).toBeTruthy();
+});
+
+
+it('uses near fog to conceal the finite town boundary', () => {
+  const home = new HomeScene();
+  expect(home.scene.fog).toBeInstanceOf(Fog);
+  const fog = home.scene.fog as Fog;
+  expect(fog.near).toBe(55);
+  expect(fog.far).toBe(95);
 });

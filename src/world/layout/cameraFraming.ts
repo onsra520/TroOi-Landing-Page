@@ -1,13 +1,19 @@
 import type { CameraProfile } from './types';
 
 const TARGET = [0, 0, 0] as const;
+const DESKTOP_POSITION = [22, 30, 22] as const;
+const NARROW_SCALE = 1.18;
 
 export function getCameraProfile(aspect: number): CameraProfile {
-  const narrow = aspect < 0.8;
+  const scale = aspect < 0.8 ? NARROW_SCALE : 1;
 
   return {
-    fov: narrow ? 36 : 32,
-    position: narrow ? [18, 25, 30] : [20, 22, 26],
+    fov: 30,
+    position: [
+      DESKTOP_POSITION[0] * scale,
+      DESKTOP_POSITION[1] * scale,
+      DESKTOP_POSITION[2] * scale,
+    ],
     target: TARGET,
     near: 0.1,
     far: 200,

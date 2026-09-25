@@ -18,9 +18,9 @@ export class Town {
     this.root.name = 'town';
     this.root.userData.town = { size: 5, seed: 520 };
 
-    const base = new Mesh(BASE_GEOMETRY, materials.road);
+    const base = new Mesh(BASE_GEOMETRY, materials.grass);
     base.name = 'town-base';
-    base.scale.set(TOWN_SIZE + BLOCK_SIZE, 0.08, TOWN_SIZE + BLOCK_SIZE);
+    base.scale.set(TOWN_SIZE + BLOCK_SIZE * 5, 0.08, TOWN_SIZE + BLOCK_SIZE * 5);
     base.position.y = -0.04;
     this.root.add(base);
 
