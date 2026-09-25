@@ -37,7 +37,7 @@ The project will not copy InfiniTown's source code, models, textures, branding, 
 - one HomeScene;
 - one perspective camera, calibrated to the InfiniTown reference;
 - a finite but extensible town built from districts, blocks, and assets;
-- approximately 4x4 or 5x5 visible/supporting blocks, selected by framing rather than a hard requirement;
+- a 5x5 logical block grid, with the camera showing the appropriate subset for the current aspect ratio;
 - roads, intersections, sidewalks or block borders sufficient to define the city grid;
 - stylized buildings with varied footprint, height, roof, window, and color treatment;
 - trees and a restrained set of street/environment props;
@@ -206,7 +206,7 @@ Requirements:
 - roads should read diagonally through the frame in a composition comparable to the reference;
 - camera values are tuned visually against the reference rather than frozen to arbitrary coordinates before the town exists.
 
-The camera is effectively static in v1. Any ambient camera drift or pointer parallax is excluded unless it becomes necessary to reproduce the reference feel; if added, movement must be subtle and must not expose the finite town boundary.
+The camera is static in v1. There is no pointer parallax, orbit control, ambient drift, or user camera control in this milestone.
 
 ## 8. Visual language
 
@@ -244,7 +244,7 @@ The homepage must remain lightweight enough for continuous real-time rendering.
 
 Guidelines:
 
-- cap renderer pixel ratio, initially `min(devicePixelRatio, 2)` and lower if profiling requires it;
+- cap renderer pixel ratio at `min(devicePixelRatio, 2)` initially;
 - share geometries and materials wherever practical;
 - use `InstancedMesh` for sufficiently repeated simple assets such as trees, windows, or repeated building primitives when it materially reduces draw calls;
 - avoid large textures in v1; prefer geometry/material color where possible;
@@ -252,7 +252,7 @@ Guidelines:
 - avoid per-frame allocations in the render loop;
 - keep world generation deterministic and perform it once at startup.
 
-Performance acceptance targets are practical rather than absolute: smooth desktop rendering is the priority, with a usable reduced-cost rendering path for mobile-sized viewports if necessary.
+Target steady-state rendering is approximately 60 FPS on a typical desktop browser and at least 30 FPS on a representative mid-range mobile browser. If profiling misses those targets, optimization order is: reduce device pixel ratio, reduce shadow cost, reduce draw calls/mesh count, then simplify geometry.
 
 ## 11. Responsive behavior
 
@@ -263,9 +263,9 @@ On resize:
 1. update stored width/height;
 2. update camera aspect ratio and projection matrix;
 3. resize renderer;
-4. re-evaluate pixel-ratio cap if needed.
+4. apply the configured pixel-ratio cap.
 
-The composition should remain recognizable across common desktop and mobile aspect ratios. The implementation may adjust camera distance/FOV by breakpoint if a single set of values crops the town poorly, but the viewing direction must remain consistent with the reference.
+The composition should remain recognizable across common desktop and mobile aspect ratios. The implementation may adjust camera distance and FOV by viewport class if a single setting crops the town poorly, but the viewing direction/elevation remains consistent with the InfiniTown reference.
 
 ## 12. Error handling
 
