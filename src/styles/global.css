@@ -30,3 +30,19 @@ body {
 #webgl-fallback[hidden] {
   display: none;
 }
+
+#loading-overlay {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+  background: #d8e8d4;
+  font: 600 1rem/1.5 system-ui, sans-serif;
+  text-align: center;
+}
+
+#loading-overlay[hidden],
+#webgl-fallback[hidden] {
+  display: none !important;
+}

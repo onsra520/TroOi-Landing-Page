@@ -1,12 +1,13 @@
-import { Color, DirectionalLight, Fog, HemisphereLight, Scene } from 'three';
+﻿import { Color, DirectionalLight, Fog, HemisphereLight, Scene } from 'three';
 import { colors } from '../world/assets/materials';
 import { Town } from '../world/Town';
+import type { AssetProvider } from '../world/resources/assetTypes';
 
 export class HomeScene {
   readonly scene = new Scene();
   private readonly town = new Town();
 
-  constructor() {
+  constructor(_assets?: AssetProvider) {
     const background = new Color(colors.sky);
     this.scene.background = background;
     this.scene.fog = new Fog(background, 55, 95);
@@ -25,3 +26,4 @@ export class HomeScene {
     this.town.update(delta, elapsed);
   }
 }
+
