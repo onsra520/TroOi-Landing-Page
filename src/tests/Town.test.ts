@@ -13,3 +13,8 @@ it('exposes a named town root for scene composition', () => {
   const town = new Town();
   expect(town.root.name).toBe('town');
 });
+
+it('composes a dedicated vehicle group', () => {
+  const town = new Town();
+  expect(town.root.getObjectByName('vehicles')).toBeTruthy();
+});
