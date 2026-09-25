@@ -1,4 +1,4 @@
-import { Group } from 'three';
+import { Group, InstancedMesh, Matrix4, Mesh, Object3D } from 'three';
 import type { AssetId, AssetProvider } from '../resources/assetTypes';
 import {
   BLOCK_PITCH,
@@ -8,6 +8,14 @@ import {
 } from './roadTopology';
 
 const HALF_PI = Math.PI / 2;
+type BatchedRoadAssetId = 'road-straight' | 'road-crossing';
+
+interface RoadPlacement {
+  id: string;
+  x: number;
+  z: number;
+  rotation: 0 | 1 | 2 | 3;
+}
 
 function roadAsset(kind: 'corner' | 'tsplit' | 'junction'): AssetId {
   if (kind === 'corner') return 'road-corner';
@@ -18,6 +26,10 @@ function roadAsset(kind: 'corner' | 'tsplit' | 'junction'): AssetId {
 export class RoadNetwork {
   readonly root = new Group();
   readonly routes: readonly LaneRoute[];
+  private readonly batchedRoads = new Map<BatchedRoadAssetId, RoadPlacement[]>([
+    ['road-straight', []],
+    ['road-crossing', []],
+  ]);
 
   constructor(
     private readonly assets: AssetProvider,
@@ -68,7 +80,6 @@ export class RoadNetwork {
         }
       }
     }
-
     for (let zIndex = 0; zIndex < count; zIndex += 1) {
       for (let gap = 0; gap < this.visualSize; gap += 1) {
         const start = lines[gap]!;
@@ -84,6 +95,8 @@ export class RoadNetwork {
         this.addStraightPair('z', xIndex, gap, x, start);
       }
     }
+
+    this.flushBatchedRoads();
   }
 
   private addStraightPair(
@@ -95,13 +108,64 @@ export class RoadNetwork {
   ): void {
     for (const offset of [2, 4] as const) {
       const crossing = (primary + secondary + offset + this.seed) % 3 === 0;
-      const assetId: AssetId = crossing && this.assets.has('road-crossing')
+      const assetId: BatchedRoadAssetId = crossing && this.assets.has('road-crossing')
         ? 'road-crossing'
         : 'road-straight';
       const x = axis === 'x' ? xOrStart + offset : xOrStart;
       const z = axis === 'z' ? zOrStart + offset : zOrStart;
       const rotation = axis === 'x' ? 1 : 0;
-      this.placeRoad(`road-${axis}-${primary}-${secondary}-${offset}`, assetId, x, z, rotation);
+      this.batchedRoads.get(assetId)!.push({
+        id: `road-${axis}-${primary}-${secondary}-${offset}`,
+        x,
+        z,
+        rotation,
+      });
+    }
+  }
+
+  private flushBatchedRoads(): void {
+    for (const [assetId, placements] of this.batchedRoads) {
+      if (placements.length === 0) continue;
+      const prototype = this.assets.clone(assetId);
+      prototype.updateMatrixWorld(true);
+      const meshes: Mesh[] = [];
+      prototype.traverse((object) => {
+        if (object instanceof Mesh) meshes.push(object);
+      });
+      if (meshes.length !== 1) {
+        for (const placement of placements) {
+          this.placeRoad(
+            placement.id,
+            assetId,
+            placement.x,
+            placement.z,
+            placement.rotation,
+          );
+        }
+        continue;
+      }
+
+      const source = meshes[0]!;
+      const batch = new InstancedMesh(source.geometry, source.material, placements.length);
+      batch.name = `batch:${assetId}`;
+      batch.userData.roadTileBatch = true;
+      batch.userData.instanceIds = placements.map((placement) => placement.id);
+      batch.userData.asset = { id: batch.name, type: 'road', archetype: assetId };
+
+      const sourceMatrix = source.matrixWorld.clone();
+      const transform = new Object3D();
+      const composed = new Matrix4();
+      placements.forEach((placement, index) => {
+        transform.position.set(placement.x, 0, placement.z);
+        transform.rotation.set(0, placement.rotation * HALF_PI, 0);
+        transform.updateMatrix();
+        composed.multiplyMatrices(transform.matrix, sourceMatrix);
+        batch.setMatrixAt(index, composed);
+      });
+
+      batch.instanceMatrix.needsUpdate = true;
+      batch.computeBoundingSphere();
+      this.root.add(batch);
     }
   }
 

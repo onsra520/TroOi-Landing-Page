@@ -1,22 +1,23 @@
 import { expect, it } from 'vitest';
 import { getCameraProfile } from '../world/layout/cameraFraming';
 
-it('keeps one viewing target while backing off on narrow screens', () => {
-  const desktop = getCameraProfile(16 / 9);
-  const mobile = getCameraProfile(9 / 16);
-
-  expect(desktop.target).toEqual(mobile.target);
-  expect(mobile.position[1]).toBeGreaterThanOrEqual(desktop.position[1]);
-  expect(mobile.position[2]).toBeGreaterThanOrEqual(desktop.position[2]);
+it('locks the browser-calibrated desktop camera profile', () => {
+  const profile = getCameraProfile(16 / 9);
+  expect(profile.fov).toBe(36);
+  expect(profile.target).toEqual([0, 1.25, 0]);
+  expect(profile.position[0]).toBeCloseTo(9.45);
+  expect(profile.position[1]).toBeCloseTo(10.07);
+  expect(profile.position[2]).toBeCloseTo(11.45);
+  expect(profile.near).toBe(0.1);
+  expect(profile.far).toBe(220);
 });
 
-it('uses one low-perspective FOV and preserves camera direction', () => {
+it('backs off portrait framing without changing the viewing direction', () => {
   const desktop = getCameraProfile(16 / 9);
-  const mobile = getCameraProfile(9 / 16);
-  const scale = mobile.position[0] / desktop.position[0];
-
-  expect(desktop.fov).toBe(30);
-  expect(mobile.fov).toBe(30);
-  expect(mobile.position[1]).toBeCloseTo(desktop.position[1] * scale);
-  expect(mobile.position[2]).toBeCloseTo(desktop.position[2] * scale);
+  const mobile = getCameraProfile(390 / 844);
+  expect(mobile.fov).toBe(36);
+  expect(mobile.target).toEqual(desktop.target);
+  expect(mobile.position[0]).toBeCloseTo(11.151);
+  expect(mobile.position[1]).toBeCloseTo(11.6576);
+  expect(mobile.position[2]).toBeCloseTo(13.511);
 });

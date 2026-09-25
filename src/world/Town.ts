@@ -13,7 +13,7 @@ export class Town {
   readonly root = new Group();
   private readonly vehicles: VehicleSystem;
 
-  constructor(assets: AssetProvider, readonly visualSize: 7 | 9 = 7) {
+  constructor(assets: AssetProvider, readonly visualSize: 7 | 9 = 9) {
     this.root.name = 'town';
     this.root.userData.town = { logicalSize: 5, visualSize, seed: 520 };
 

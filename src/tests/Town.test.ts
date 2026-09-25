@@ -46,3 +46,10 @@ it('exposes overscan metadata on the town root', () => {
   const town = new Town(fakeAssets, 7);
   expect(town.root.userData.town).toEqual({ logicalSize: 5, visualSize: 7, seed: 520 });
 });
+it('defaults to a 9x9 visual footprint after edge-coverage QA', () => {
+  const town = new Town(fakeAssets);
+  const blocks = town.root.getObjectByName('blocks') as Group;
+  expect(town.root.userData.town.visualSize).toBe(9);
+  expect(blocks.children).toHaveLength(81);
+  expect(blocks.children.filter((b) => b.userData.logical === true)).toHaveLength(25);
+});

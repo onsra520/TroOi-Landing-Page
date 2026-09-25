@@ -1,4 +1,4 @@
-import { Group } from 'three';
+﻿import { BoxGeometry, Group, InstancedMesh, Mesh, MeshBasicMaterial } from 'three';
 import { describe, expect, it } from 'vitest';
 import { RoadNetwork } from '../world/roads/RoadNetwork';
 import { getIntersectionTopology, getRoadLinePositions } from '../world/roads/roadTopology';
@@ -52,4 +52,27 @@ describe('RoadNetwork', () => {
       expect(quarter).toBeCloseTo(Math.round(quarter));
     });
   });
+});
+
+it('instances repeated straight and crossing road tiles at 9x9', () => {
+  const geometry = new BoxGeometry(1, 0.1, 1);
+  const material = new MeshBasicMaterial();
+  const assets: AssetProvider = {
+    preload: async () => undefined,
+    has: () => true,
+    clone(id) {
+      const root = new Group();
+      root.name = id;
+      root.add(new Mesh(geometry, material));
+      return root;
+    },
+  };
+
+  const roads = new RoadNetwork(assets, 9, 520);
+  const batches: InstancedMesh[] = [];
+  roads.root.traverse((object) => {
+    if (object instanceof InstancedMesh) batches.push(object);
+  });
+  expect(batches.length).toBeGreaterThanOrEqual(2);
+  expect(batches.reduce((sum, batch) => sum + batch.count, 0)).toBeGreaterThan(300);
 });

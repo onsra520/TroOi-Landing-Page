@@ -34,7 +34,7 @@ it('keeps the real-vendor town below 850 mesh objects', () => {
     },
   };
 
-  const town = new Town(assets, 7);
+  const town = new Town(assets);
   let meshes = 0;
   town.root.traverse((object) => {
     if ((object as { isMesh?: boolean }).isMesh) meshes += 1;

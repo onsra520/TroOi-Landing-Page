@@ -1,7 +1,7 @@
 import type { AssetProvider } from '../world/resources/assetTypes';
 import { HomeScene } from '../scenes/HomeScene';
 import { Camera } from './Camera';
-import { Renderer } from './Renderer';
+import { Renderer, type RenderStats } from './Renderer';
 import { Sizes } from './Sizes';
 import { Time } from './Time';
 
@@ -39,6 +39,10 @@ export class Experience {
     if (this.running) return;
     this.running = true;
     this.frameId = requestAnimationFrame(this.tick);
+  }
+
+  getRenderStats(): RenderStats {
+    return this.renderer.getStats();
   }
 
   dispose(): void {
