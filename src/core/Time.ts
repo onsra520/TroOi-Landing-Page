@@ -9,7 +9,7 @@ export class Time {
 
   update(nowMs = performance.now()): void {
     const nowSeconds = nowMs / 1000;
-    this.delta = Math.max(0, nowSeconds - this.lastSeconds);
+    this.delta = Math.min(0.05, Math.max(0, nowSeconds - this.lastSeconds));
     this.elapsed += this.delta;
     this.lastSeconds = nowSeconds;
   }

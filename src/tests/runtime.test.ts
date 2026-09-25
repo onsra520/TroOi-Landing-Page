@@ -38,8 +38,8 @@ it('publishes viewport changes and capped DPR', () => {
 it('tracks delta and elapsed time from supplied timestamps', () => {
   const time = new Time(1000);
   time.update(1250);
-  expect(time.delta).toBeCloseTo(0.25);
-  expect(time.elapsed).toBeCloseTo(0.25);
+  expect(time.delta).toBeCloseTo(0.05);
+  expect(time.elapsed).toBeCloseTo(0.05);
 });
 
 it('owns a scene and accepts frame updates', () => {
