@@ -18,3 +18,12 @@ it('composes a dedicated vehicle group', () => {
   const town = new Town();
   expect(town.root.getObjectByName('vehicles')).toBeTruthy();
 });
+
+it('keeps town mesh count below the homepage draw-call budget', () => {
+  const town = new Town();
+  let meshes = 0;
+  town.root.traverse((object) => {
+    if ((object as { isMesh?: boolean }).isMesh) meshes += 1;
+  });
+  expect(meshes).toBeLessThan(650);
+});

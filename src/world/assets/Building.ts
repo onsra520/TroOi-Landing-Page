@@ -1,4 +1,4 @@
-import { BoxGeometry, ConeGeometry, Group, Mesh } from 'three';
+import { BoxGeometry, ConeGeometry, Group, InstancedMesh, Mesh, Object3D } from 'three';
 import { createSeededRandom } from '../layout/seededRandom';
 import type { BlockVariant, BuildingOptions } from '../layout/types';
 import { materials } from './materials';
@@ -21,25 +21,33 @@ function heightRange(variant: BlockVariant): readonly [number, number] {
 
 function addWindows(root: Group, width: number, depth: number, height: number): void {
   const rows = Math.max(1, Math.floor(height / 1.15));
+  const transforms: Array<readonly [number, number, number, number, number, number]> = [];
 
   for (let row = 0; row < rows; row += 1) {
     const y = 0.72 + row * 1.05;
     if (y > height - 0.32) break;
 
     for (const offset of [-0.23, 0.23]) {
-      const front = new Mesh(BOX, materials.window);
-      front.scale.set(0.3, 0.38, 0.045);
-      front.position.set(width * offset, y, depth / 2 + 0.025);
-      root.add(front);
+      transforms.push([width * offset, y, depth / 2 + 0.025, 0.3, 0.38, 0.045]);
     }
-
-    const side = new Mesh(BOX, materials.window);
-    side.scale.set(0.045, 0.38, 0.32);
-    side.position.set(width / 2 + 0.025, y, 0);
-    root.add(side);
+    transforms.push([width / 2 + 0.025, y, 0, 0.045, 0.38, 0.32]);
   }
-}
 
+  if (transforms.length === 0) return;
+
+  const windows = new InstancedMesh(BOX, materials.window, transforms.length);
+  windows.name = 'windows';
+  const transform = new Object3D();
+
+  transforms.forEach(([x, y, z, scaleX, scaleY, scaleZ], index) => {
+    transform.position.set(x, y, z);
+    transform.scale.set(scaleX, scaleY, scaleZ);
+    transform.updateMatrix();
+    windows.setMatrixAt(index, transform.matrix);
+  });
+  windows.instanceMatrix.needsUpdate = true;
+  root.add(windows);
+}
 export function createBuilding(options: BuildingOptions): Group {
   const random = createSeededRandom(options.seed);
   const root = new Group();
