@@ -1,3 +1,4 @@
+import { mountHomepage } from "./ui/Homepage";
 import "./styles/global.css";
 import { bootstrap } from "./bootstrap";
 import { Experience } from "./core/Experience";
@@ -51,3 +52,5 @@ window.addEventListener("pagehide", (event) => {
   if (!event.persisted) current?.dispose();
 });
 void start();
+
+mountHomepage((x, z) => current?.panBy(x, z));
