@@ -8,6 +8,7 @@ import {
   MeshBasicMaterial,
   MeshStandardMaterial,
   PlaneGeometry,
+  Raycaster,
   SRGBColorSpace,
   Vector3,
 } from "three";
@@ -154,6 +155,77 @@ function authored(key: ModelKey, palette: number): Group {
   root.userData.authored = true;
   return root;
 }
+// KayKit A-H have a detailed +Z frontage but blank party walls and rear.
+// Raycast the original mesh so added windows sit on the wall, not roof overhangs.
+function completeVendorFacades(model: Group, asset: string): void {
+  const floors = (
+    {
+      "building-a": 2,
+      "building-b": 3,
+      "building-c": 3,
+      "building-d": 4,
+      "building-e": 4,
+      "building-f": 5,
+      "building-g": 5,
+      "building-h": 6,
+    } as Record<string, number>
+  )[asset];
+  if (!floors) return;
+  model.updateMatrixWorld(true);
+  const bounds = new Box3().setFromObject(model);
+  if (bounds.isEmpty()) return;
+  const size = bounds.getSize(new Vector3());
+  const center = bounds.getCenter(new Vector3());
+  const source = [...model.children];
+  const ray = new Raycaster();
+  const detail = new Group();
+  detail.name = "side-and-rear-windows";
+  const depth = Math.min(size.x, size.z) * 0.012;
+  for (const normal of [
+    new Vector3(1, 0, 0),
+    new Vector3(-1, 0, 0),
+    new Vector3(0, 0, -1),
+  ]) {
+    const side = normal.x !== 0;
+    const span = side ? size.z : size.x;
+    for (let floor = 0; floor < floors; floor++) {
+      const y =
+        bounds.min.y + size.y * (0.13 + ((floor + 0.5) * 0.72) / floors);
+      for (const column of [-0.28, 0, 0.28]) {
+        const origin = center
+          .clone()
+          .addScaledVector(normal, Math.max(size.x, size.z) * 2);
+        origin.y = y;
+        if (side) origin.z += column * span;
+        else origin.x += column * span;
+        ray.set(origin, normal.clone().negate());
+        const hit = ray.intersectObjects(source, true)[0];
+        if (!hit) continue;
+        const point = model.worldToLocal(hit.point.clone());
+        const w = span * 0.19,
+          h = (size.y * 0.42) / floors;
+        for (const [material, offset, width, height, thickness] of [
+          [WHITE, depth * 0.5, w, h, depth],
+          [materials.window, depth * 1.1, w * 0.77, h * 0.78, depth * 0.35],
+        ] as const) {
+          const pos = point.clone().addScaledVector(normal, offset);
+          box(
+            detail,
+            material,
+            pos.x,
+            pos.y,
+            pos.z,
+            side ? thickness : width,
+            height,
+            side ? width : thickness,
+          );
+        }
+      }
+    }
+  }
+  model.add(detail);
+}
+
 export class ClusterPrototypes {
   private readonly cache = new Map<string, Group>();
   constructor(private readonly assets: AssetProvider) {}
@@ -178,6 +250,8 @@ export class ClusterPrototypes {
       const model = vendor
         ? this.assets.clone(p.asset as AssetId)
         : authored(p.asset, (d.palette + i) % 5);
+      if (vendor && p.role === "building")
+        completeVendorFacades(model, p.asset);
       model.updateMatrixWorld(true);
       const bounds = new Box3().setFromObject(model);
       const size = bounds.getSize(new Vector3());
