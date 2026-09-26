@@ -1,3 +1,4 @@
+import {PeriodicVehicleSystem} from './PeriodicVehicleSystem';
 import {BoxGeometry,Group,Mesh,Object3D,PerspectiveCamera} from 'three';
 import {materials} from './assets/materials';
 import {ClusterLibrary} from './clusters/ClusterLibrary';
@@ -21,8 +22,10 @@ export class InfiniteTown {
  private readonly ground=new Mesh(this.groundGeometry,materials.grass);
  private dirty=true;
  private elapsed=0;
+ private readonly vehicles:PeriodicVehicleSystem;
  get poolSize():number{return this.pool.snapshot().length;}
  constructor(private readonly assets:AssetProvider,camera:PerspectiveCamera){
+  this.vehicles=new PeriodicVehicleSystem(assets);this.root.add(this.vehicles.root);
   this.root.name='town';this.window=coverage(camera,3.8,3);
   this.prototypes=new ClusterPrototypes(assets);
   this.batch=new InstanceBatch(this.capacity());this.roads=new RoadPool(assets,this.capacity());
@@ -52,6 +55,7 @@ export class InfiniteTown {
    this.ground.position.x=(this.window.min.x+this.window.max.x)*3;this.ground.position.z=(this.window.min.z+this.window.max.z)*3;this.dirty=false;
   }
   this.root.position.set(frame.residual.x,0,frame.residual.z);
+  this.vehicles.sync(frame);
  }
- dispose():void{this.batch.dispose();this.roads.dispose();this.prototypes.dispose();this.groundGeometry.dispose();this.root.clear();}
+ dispose():void{this.vehicles.dispose();this.batch.dispose();this.roads.dispose();this.prototypes.dispose();this.groundGeometry.dispose();this.root.clear();}
 }
