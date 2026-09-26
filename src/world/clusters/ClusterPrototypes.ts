@@ -1,4 +1,4 @@
-import { Box3, BoxGeometry, BufferGeometry, Float32BufferAttribute, Group, Mesh, MeshStandardMaterial, Vector3 } from 'three';
+import { Box3, BoxGeometry, BufferGeometry, CanvasTexture, Float32BufferAttribute, Group, Mesh, MeshBasicMaterial, MeshStandardMaterial, PlaneGeometry, SRGBColorSpace, Vector3 } from 'three';
 import { materials } from '../assets/materials';
 import type { AssetId, AssetProvider } from '../resources/assetTypes';
 import type { ClusterDescriptor, ModelKey } from './ClusterLibrary';
@@ -9,8 +9,30 @@ const WHITE=new MeshStandardMaterial({color:0xfaf0dc,roughness:0.8});
 function box(root:Group,material:MeshStandardMaterial,x:number,y:number,z:number,w:number,h:number,d:number):void {
   const m=new Mesh(BOX,material);m.position.set(x,y,z);m.scale.set(w,h,d);m.castShadow=true;m.receiveShadow=true;root.add(m);
 }
+let signMaterial:MeshBasicMaterial|null=null;
+function sign():Mesh|null {
+  if(typeof document==='undefined'||typeof CanvasRenderingContext2D==='undefined')return null;
+  if(!signMaterial){const canvas=document.createElement('canvas');canvas.width=512;canvas.height=128;
+    const ctx=canvas.getContext('2d');if(!ctx)return null;
+    ctx.fillStyle='#fff3d7';ctx.fillRect(0,0,512,128);ctx.fillStyle='#315a4f';ctx.font='bold 90px Georgia';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('TrọƠi',256,68);
+    const map=new CanvasTexture(canvas);map.colorSpace=SRGBColorSpace;signMaterial=new MeshBasicMaterial({map});
+  }
+  return new Mesh(new PlaneGeometry(0.82,0.21),signMaterial);
+}
 function authored(key:ModelKey,palette:number):Group {
   const root=new Group(); root.name=key;
+  if(key==='gas-station'){
+    box(root,WHITE,0,0.05,0,1.4,0.1,1.3);
+    for(const x of [-0.52,0.52])box(root,materials.metal,x,0.55,0,0.06,1.1,0.07);
+    box(root,materials.accent,0,1.1,0,1.4,0.13,1.1);
+    box(root,WHITE,0,1.03,0,1.4,0.025,1.1);
+    for(const x of [-0.3,0.3]){
+      box(root,WHITE,x,0.3,0,0.22,0.5,0.23);
+      box(root,materials.window,x,0.4,0.125,0.15,0.16,0.018);
+      box(root,materials.metal,x+0.14,0.27,0,0.035,0.37,0.04);
+    }
+    root.userData.authored=true;return root;
+  }
   const floors=key==='office'?5:key==='apartment'||key==='landmark'?4:key==='townhouse'?2:1;
   const h=floors*0.55;
   box(root,WALLS[palette]!,0,h/2,0,1,h,0.9);
@@ -50,6 +72,8 @@ function authored(key:ModelKey,palette:number):Group {
     box(root,materials.accent,0,0.57,0.65,1.06,0.12,0.38);
     for(let n=0;n<6;n++) box(root,n%2?WHITE:materials.accent,-0.44+n*0.175,0.575,0.67,0.17,0.13,0.4);
   }
+  if(key==='landmark'){const label=sign();if(label){label.position.set(0,h-0.18,0.515);root.add(label);}}
+  if(key==='factory'){for(const x of [-0.28,0.28])box(root,materials.metal,x,h+0.35,-0.2,0.12,0.7,0.12);}
   root.userData.authored=true;return root;
 }
 export class ClusterPrototypes {

@@ -2,7 +2,8 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { BoxGeometry, Group, Mesh, MeshBasicMaterial } from 'three';
 import { expect, it } from 'vitest';
-import { Town } from '../world/Town';
+import { InfiniteTown } from '../world/InfiniteTown';
+import {Camera} from '../core/Camera';
 import { assetManifest } from '../world/resources/assetManifest';
 import type { AssetId, AssetProvider } from '../world/resources/assetTypes';
 
@@ -34,11 +35,12 @@ it('keeps the real-vendor town below 850 mesh objects', () => {
     },
   };
 
-  const town = new Town(assets);
+  const town = new InfiniteTown(assets,new Camera(1440,900).instance);
   let meshes = 0;
   town.root.traverse((object) => {
     if ((object as { isMesh?: boolean }).isMesh) meshes += 1;
   });
 
   expect(meshes).toBeLessThan(850);
+  town.dispose();
 });
