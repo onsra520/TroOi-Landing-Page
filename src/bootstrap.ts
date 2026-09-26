@@ -1,6 +1,7 @@
 export interface StartableExperience {
   initialize(): Promise<void>;
   start(): void;
+  dispose?(): void;
 }
 
 export async function bootstrap<T extends StartableExperience>(
@@ -9,13 +10,16 @@ export async function bootstrap<T extends StartableExperience>(
   const loading = document.querySelector('#loading-overlay');
   const fallback = document.querySelector('#webgl-fallback');
 
+  let experience:T|undefined;
   try {
-    const experience = createExperience();
+    experience = createExperience();
     await experience.initialize();
     loading?.setAttribute('hidden', '');
+    fallback?.setAttribute('hidden','');
     experience.start();
     return experience;
   } catch (error) {
+    experience?.dispose?.();
     console.error('Failed to start TrọƠi 3D town', error);
     loading?.setAttribute('hidden', '');
     fallback?.removeAttribute('hidden');

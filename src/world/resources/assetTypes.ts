@@ -19,6 +19,8 @@ export interface AssetManifestEntry {
 
 export interface AssetProvider {
   preload(): Promise<void>;
+  dispose?(): void;
+  configureTextures?(anisotropy:number):void;
   clone(id: AssetId): Group;
   has(id: AssetId): boolean;
 }

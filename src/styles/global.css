@@ -51,3 +51,8 @@ body {
 #app canvas:active { cursor: grabbing; }
 #map-explore { display:none; position:fixed; bottom:24px; left:50%; transform:translateX(-50%); z-index:5; border:1px solid #d4d4c6; border-radius:24px; padding:12px 22px; background:#fff9ec; color:#314742; font:600 14px system-ui; box-shadow:0 4px 20px #20383022; }
 @media (pointer:coarse) { #map-explore { display:block; } }
+
+#webgl-fallback { z-index:10; background:radial-gradient(ellipse at 70% 20%,#e8dac0,#c6d8c8); color:#284b42; }
+#webgl-fallback h1 { font:700 64px Georgia,serif; margin:0; }
+#retry-3d { border:0; border-radius:22px; background:#284b42; color:white; padding:12px 28px; cursor:pointer; }
+#retry-3d:disabled { opacity:0.5; }
