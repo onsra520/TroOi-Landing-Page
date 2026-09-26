@@ -3,7 +3,6 @@ import {
   BoxGeometry,
   BufferGeometry,
   CanvasTexture,
-  Float32BufferAttribute,
   Group,
   Mesh,
   MeshBasicMaterial,
@@ -120,30 +119,13 @@ function authored(key: ModelKey, palette: number): Group {
   }
   box(root, materials.window, 0, 0.2, 0.5, 0.23, 0.4, 0.04);
   box(root, WHITE, 0, 0.025, 0.56, 0.4, 0.05, 0.2);
-  if (key === "townhouse") {
-    const vertices = [
-      -0.6, 0, -0.55, 0.6, 0, -0.55, 0, 0.4, -0.55, -0.6, 0, 0.55, 0, 0.4, 0.55,
-      0.6, 0, 0.55, -0.6, 0, -0.55, 0, 0.4, -0.55, 0, 0.4, 0.55, -0.6, 0, -0.55,
-      0, 0.4, 0.55, -0.6, 0, 0.55, 0, 0.4, -0.55, 0.6, 0, -0.55, 0.6, 0, 0.55,
-      0, 0.4, -0.55, 0.6, 0, 0.55, 0, 0.4, 0.55,
-    ];
-    const geometry = new BufferGeometry();
-    geometry.setAttribute("position", new Float32BufferAttribute(vertices, 3));
-    geometry.computeVertexNormals();
-    const roof = new Mesh(geometry, ROOFS[palette]);
-    roof.position.y = h;
-    roof.castShadow = true;
-    root.add(roof);
-    box(root, materials.concrete, 0.25, h + 0.26, -0.2, 0.14, 0.45, 0.15);
-  } else {
-    box(root, ROOFS[palette]!, 0, h + 0.015, 0, 1.05, 0.07, 0.96);
-    for (const side of [-1, 1]) {
-      box(root, WHITE, side * 0.52, h + 0.11, 0, 0.045, 0.18, 1);
-      box(root, WHITE, 0, h + 0.11, side * 0.47, 1.04, 0.18, 0.045);
-    }
-    box(root, materials.metal, 0.22, h + 0.13, 0.16, 0.25, 0.18, 0.2);
-    box(root, materials.concrete, -0.25, h + 0.12, -0.15, 0.16, 0.16, 0.24);
+  box(root, ROOFS[palette]!, 0, h + 0.015, 0, 1.05, 0.07, 0.96);
+  for (const side of [-1, 1]) {
+    box(root, WHITE, side * 0.52, h + 0.11, 0, 0.045, 0.18, 1);
+    box(root, WHITE, 0, h + 0.11, side * 0.47, 1.04, 0.18, 0.045);
   }
+  box(root, materials.metal, 0.22, h + 0.13, 0.16, 0.25, 0.18, 0.2);
+  box(root, materials.concrete, -0.25, h + 0.12, -0.15, 0.16, 0.16, 0.24);
   if (key === "shop" || key === "landmark") {
     box(root, materials.accent, 0, 0.57, 0.65, 1.06, 0.12, 0.38);
     for (let n = 0; n < 6; n++)
