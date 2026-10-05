@@ -54,9 +54,9 @@ Không thay đổi hai file thư viện Three.js và không cần thêm bước 
 **File:** `dist/style.css`, `dist/story.js`, `dist/role-scene.js`, `dist/landlord-scene.js`
 
 - Cố định nền gốc `#eef3e9` trên `html`, `body` và lớp nền toàn trang.
-- Đặt `#stage`, `#landlord-stage`, `#roles-scene` và các canvas về nền trong suốt.
-- Các WebGL renderer dùng `alpha: true`, `premultipliedAlpha: false` cho cảnh mới và clear color có alpha bằng `0`.
-- Nếu trình duyệt không cung cấp WebGL alpha, scene dùng màu nền `#eef3e9` thay vì màu trắng.
+- Đặt `#stage`, `#landlord-stage`, `#roles-scene` và các canvas về cùng màu `#eef3e9`.
+- Các WebGL renderer dùng nền đục (`alpha: false`) và clear color `#eef3e9` với alpha bằng `1`.
+- Không còn phụ thuộc vào khả năng alpha compositing của GPU/trình duyệt; đây là nguyên nhân làm canvas trong suốt đôi khi hiện thành một component trắng.
 
 Mục tiêu là loại bỏ hình chữ nhật trắng và đường cắt giữa nội dung với vùng 3D.
 

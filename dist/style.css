@@ -74,15 +74,17 @@ body[data-branch="pending"] #roles{height:200vh}
 body[data-branch="pending"] .chapter-nav a:nth-child(n+3){display:none}
 section[hidden]{display:none!important}
 body[data-branch="pending"]:not(.hero-view) #stage,body[data-branch="landlord"]:not(.hero-view):not(.app-view) #stage{opacity:0!important;visibility:hidden!important}
-#landlord-stage{position:fixed;top:3%;left:32%;width:72%;height:94%;z-index:2;pointer-events:none;opacity:0;visibility:hidden;background:transparent;border:0;outline:0}
-#landlord-stage canvas{display:block;width:100%;height:100%;background:transparent;border:0}
+#landlord-stage{position:fixed;top:3%;left:32%;width:72%;height:94%;z-index:2;pointer-events:none;opacity:0;visibility:hidden;background:#eef3e9;border:0;outline:0}
+#landlord-stage canvas{display:block;width:100%;height:100%;background:#eef3e9;border:0}
 body[data-branch="landlord"] #landlord-stage{opacity:var(--landlord-scene-opacity,0);visibility:visible}
 body[data-branch="landlord"].app-view #landlord-stage{opacity:var(--landlord-scene-opacity,0)}
 body[data-active-chapter="app"] #landlord-stage{opacity:0!important;visibility:hidden!important}
 #post h2,#utilities h2,#messages h2{font-size:clamp(40px,4.6vw,70px);max-width:min(650px,86vw);line-height:1.2;letter-spacing:-.045em}
 #post h2>span,#utilities h2>span,#messages h2>span{white-space:normal}
 @media(max-width:800px){#landlord-stage{top:43%;left:-10%;width:120%;height:51%}#post h2,#utilities h2,#messages h2{font-size:clamp(31px,7.5vw,46px);max-width:88vw}}
-#stage,#stage canvas,#roles .roles-scene,#roles .roles-scene canvas{background:transparent;border:0;outline:0;box-shadow:none}
+/* WebGL dùng nền đục đồng màu để không lộ component trắng trên GPU/browser
+   không compositing alpha ổn định. */
+#stage,#stage canvas,#roles .roles-scene,#roles .roles-scene canvas{background:#eef3e9;border:0;outline:0;box-shadow:none}
 #roles .copy{--roles-top:clamp(94px,11vh,116px);--roles-bottom:70px;position:fixed;top:var(--roles-top);left:0;margin:0;padding:0 4.5%;width:100%;max-width:none;height:calc(100dvh - var(--roles-top) - var(--roles-bottom));display:flex;flex-direction:column;align-items:center}
 #roles .roles-heading{text-align:center;max-width:740px;margin:0 auto;flex:none}
 #roles .roles-heading,#roles .role-switch{opacity:var(--role-copy-opacity,1);transform:translateY(var(--role-copy-y,0px))}

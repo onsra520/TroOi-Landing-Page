@@ -6,10 +6,10 @@ const host = document.getElementById('roles-scene');
 const chapter = document.getElementById('roles');
 if (!host || !chapter) throw new Error('Missing roles scene host');
 
-const renderer = new T.WebGLRenderer({ alpha: true, antialias: true, premultipliedAlpha: false, powerPreference: 'high-performance' });
-// Use the original scene's transparent clear color. Some browsers otherwise
-// briefly composite the new canvas as a dark rectangle before its first frame.
-renderer.setClearColor(0xeef3e9, 0);
+// Nền đục cùng màu trang tránh lỗi GPU/browser biến canvas trong suốt thành một
+// hình chữ nhật trắng khi phần tử đang transform hoặc thay đổi opacity.
+const renderer = new T.WebGLRenderer({ alpha: false, antialias: true, powerPreference: 'high-performance' });
+renderer.setClearColor(0xeef3e9, 1);
 renderer.setPixelRatio(Math.min(devicePixelRatio, 1.6));
 renderer.outputColorSpace = T.SRGBColorSpace;
 renderer.toneMapping = T.ACESFilmicToneMapping;
@@ -20,8 +20,7 @@ host.appendChild(renderer.domElement);
 renderer.domElement.style.visibility='hidden';
 
 const scene = new T.Scene();
-// If the device cannot supply an alpha channel, fall back to the page color.
-if(renderer.getContext().getContextAttributes?.()?.alpha===false)scene.background=new T.Color(0xeef3e9);
+scene.background=new T.Color(0xeef3e9);
 const camera = new T.OrthographicCamera(-5.8, 5.8, 2, -2, .1, 80);
 camera.position.set(8.5, 8, 12);
 camera.lookAt(0, 1.02, 0);

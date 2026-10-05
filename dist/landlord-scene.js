@@ -1,12 +1,12 @@
 import * as T from './three.module.js';
 
 // Một thế giới isometric liên tục cho ba chương Chủ trọ: đăng phòng, chốt điện
-// nước và kết nối khách thuê. Canvas luôn trong suốt để hòa với nền trang.
+// nước và kết nối khách thuê. Canvas dùng đúng màu nền trang để tránh component trắng.
 const host=document.getElementById('landlord-stage');
 const roles=document.getElementById('roles');
 if(!host||!roles)throw new Error('Missing landlord scene host');
-const renderer=new T.WebGLRenderer({alpha:true,antialias:true,premultipliedAlpha:false,powerPreference:'high-performance'});
-renderer.setClearColor(0xeef3e9,0);
+const renderer=new T.WebGLRenderer({alpha:false,antialias:true,powerPreference:'high-performance'});
+renderer.setClearColor(0xeef3e9,1);
 renderer.setPixelRatio(Math.min(devicePixelRatio,1.6));
 renderer.outputColorSpace=T.SRGBColorSpace;
 renderer.toneMapping=T.ACESFilmicToneMapping;
@@ -16,7 +16,7 @@ renderer.shadowMap.type=T.PCFSoftShadowMap;
 host.appendChild(renderer.domElement);
 renderer.domElement.style.visibility='hidden';
 const scene=new T.Scene();
-if(renderer.getContext().getContextAttributes?.()?.alpha===false)scene.background=new T.Color(0xeef3e9);
+scene.background=new T.Color(0xeef3e9);
 const camera=new T.OrthographicCamera(-6.5,6.5,5,-5,.1,80);
 camera.position.set(8.5,7.4,12.5);
 camera.lookAt(0,1.4,0);
