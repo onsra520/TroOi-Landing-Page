@@ -44,7 +44,6 @@ addEventListener('resize',syncHeroLayout);
 syncHeroLayout();
 const roleSwitch=document.querySelector('#roles .role-switch');
 const roleButtons=[...roleSwitch.querySelectorAll('button')];
-let rolePointer=null,ignorePointerClick=false;
 const storyIds={tenant:['room','bill','care'],landlord:['post','utilities','messages']};
 const storyLabels={tenant:['Căn phòng','Hóa đơn','Sửa chữa'],landlord:['Đăng phòng','Điện nước','Kết nối khách']};
 const chapterLinks=[...document.querySelectorAll('.chapter-nav a')];
@@ -87,6 +86,7 @@ const incomingChapter=location.hash.slice(1);
 if(storyIds.landlord.includes(incomingChapter))showBranch('landlord',false);
 else if(storyIds.tenant.includes(incomingChapter))showBranch('tenant',false);
 else if(incomingChapter==='app')showBranch('tenant',false);
+else showBranch('tenant',false);
 syncHeaderCTA();
 function markRole(index){
   roleButtons.forEach((button,i)=>button.setAttribute('aria-pressed',String(i===index)));
@@ -96,50 +96,13 @@ function settleRole(index,navigate=false){
   roleSwitch.style.setProperty('--thumb-position',index?'100%':'0%');
   if(navigate)showBranch(index?'landlord':'tenant',true);
 }
-function dragProgress(clientX){
-  const bounds=roleSwitch.getBoundingClientRect();
-  const padding=parseFloat(getComputedStyle(roleSwitch).paddingLeft)||0;
-  const inner=bounds.width-padding*2;
-  return Math.max(0,Math.min(1,(clientX-bounds.left-padding-inner*.25)/(inner*.5)));
-}
-roleSwitch.addEventListener('pointerdown',event=>{
-  if(event.pointerType==='mouse' && event.button!==0)return;
-  rolePointer={id:event.pointerId,startX:event.clientX,original:roleButtons.findIndex(button=>button.getAttribute('aria-pressed')==='true'),dragged:false};
-  roleSwitch.setPointerCapture(event.pointerId);
-});
-roleSwitch.addEventListener('pointermove',event=>{
-  if(!rolePointer || event.pointerId!==rolePointer.id)return;
-  if(!rolePointer.dragged && Math.abs(event.clientX-rolePointer.startX)<4)return;
-  rolePointer.dragged=true;
-  roleSwitch.classList.add('is-dragging');
-  const progress=dragProgress(event.clientX);
-  roleSwitch.style.setProperty('--thumb-position',progress*100+'%');
-  markRole(progress>=.5?1:0);
-});
-roleSwitch.addEventListener('pointerup',event=>{
-  if(!rolePointer || event.pointerId!==rolePointer.id)return;
-  roleSwitch.classList.remove('is-dragging');
-  settleRole(dragProgress(event.clientX)>=.5?1:0,true);
-  rolePointer=null;
-  ignorePointerClick=true;
-  setTimeout(()=>{ignorePointerClick=false},0);
-});
-function cancelRoleDrag(){
-  if(!rolePointer)return;
-  const original=rolePointer.original;
-  rolePointer=null;
-  roleSwitch.classList.remove('is-dragging');
-  settleRole(original);
-}
-roleSwitch.addEventListener('pointercancel',cancelRoleDrag);
-roleSwitch.addEventListener('lostpointercapture',cancelRoleDrag);
-roleButtons.forEach((button,index)=>button.addEventListener('click',event=>{
-  if(!ignorePointerClick)settleRole(index,true);
-}));
+// Chỉ dùng click/keyboard để bộ chọn vai trò không giữ pointer và chặn thao tác
+// cuộn dọc trên touchpad hoặc điện thoại. Người dùng tiếp tục cuộn trong cùng flow.
+roleButtons.forEach((button,index)=>button.addEventListener('click',()=>showBranch(index?'landlord':'tenant',false)));
 roleSwitch.addEventListener('keydown',event=>{
   if(event.key!=='ArrowLeft' && event.key!=='ArrowRight')return;
   event.preventDefault();
   const index=event.key==='ArrowRight'?1:0;
-  settleRole(index);
+  showBranch(index?'landlord':'tenant',false);
   roleButtons[index].focus();
 });
