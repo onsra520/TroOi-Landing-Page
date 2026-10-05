@@ -1,25 +1,40 @@
 import * as T from './three.module.js';
 import { stops, sceneState } from './timeline.js';
-const host=document.querySelector('#stage'), chapters=[...document.querySelectorAll('.chapter')], links=[...document.querySelectorAll('.chapter-nav a')];
+
+// Hai cảnh bổ sung được tách thành module riêng để giữ story.js tập trung vào
+// timeline chung. Nếu một cảnh phụ lỗi, câu chuyện gốc vẫn tiếp tục hoạt động.
+import('./role-scene.js').catch(error=>{
+  console.error('Không khởi động được cảnh vai trò:',error);
+  document.getElementById('roles-scene').hidden=true;
+});
+import('./landlord-scene.js').catch(error=>{
+  console.error('Không khởi động được cảnh chủ trọ:',error);
+  document.getElementById('landlord-stage').hidden=true;
+});
+// Danh sách chương được dựng lại sau khi người dùng chọn vai trò vì các section
+// của nhánh còn lại sẽ chuyển sang trạng thái hidden.
+const host=document.querySelector('#stage');let chapters=[...document.querySelectorAll('.chapter:not([hidden])')],links=[...document.querySelectorAll('.chapter-nav a')];addEventListener('trooi:branch-change',()=>{chapters=[...document.querySelectorAll('.chapter:not([hidden])')];links=[...document.querySelectorAll('.chapter-nav a')];getScroll()});
 const clamp=(x,a=0,b=1)=>Math.max(a,Math.min(b,x)),smooth=x=>{x=clamp(x);return x*x*(3-2*x)},lerp=(a,b,t)=>a+(b-a)*t;
-let paused=matchMedia('(prefers-reduced-motion: reduce)').matches,position=0,target=0,active=0;
+let paused=matchMedia('(prefers-reduced-motion: reduce)').matches,position=0,target=0,active=0,appLanding=false,appArrival=0;const releaseAppLanding=()=>{if(appArrival)cancelAnimationFrame(appArrival);appArrival=0;if(appLanding){appLanding=false;getScroll()}};addEventListener('wheel',releaseAppLanding,{passive:true});addEventListener('touchstart',releaseAppLanding,{passive:true});addEventListener('keydown',e=>{if(['ArrowUp','ArrowDown','PageUp','PageDown','Home','End',' '].includes(e.key))releaseAppLanding()});
 const motion=document.querySelector('#motion');function motionLabel(){motion.setAttribute('aria-pressed',String(paused));motion.innerHTML=paused?'Bật chuyển động <span>▷</span>':'Tạm dừng chuyển động <span>Ⅱ</span>'}motionLabel();motion.onclick=()=>{paused=!paused;motionLabel()};
-const labels=['MỘT THÀNH PHỐ. NGÀN KHỞI ĐẦU.','KHÔNG GIAN CỦA RIÊNG BẠN.','RÕ RÀNG TỪNG KHOẢN CHI.','Ở TRỌ, CÓ NHAU.','MỘT ỨNG DỤNG. CẢ HÀNH TRÌNH.'];
+const labels=['MỘT THÀNH PHỐ. NGÀN KHỞI ĐẦU.','KẾT NỐI HAI PHÍA.','KHÔNG GIAN CỦA RIÊNG BẠN.','RÕ RÀNG TỪNG KHOẢN CHI.','Ở TRỌ, CÓ NHAU.','MỘT ỨNG DỤNG. CẢ HÀNH TRÌNH.'];const landlordLabels=['MỘT THÀNH PHỐ. NGÀN KHỞI ĐẦU.','KẾT NỐI HAI PHÍA.','LẤP ĐẦY PHÒNG TRỐNG.','CHỐT SỐ ĐIỆN NƯỚC.','KẾT NỐI KHÁCH THUÊ.','MỘT ỨNG DỤNG. CẢ HÀNH TRÌNH.'];
 function getScroll(){
-  target=clamp(scrollY/chapters[1].offsetTop,0,4.4);
-  const idx=target<.8?0:target<1.8?1:target<2.93?2:target<3.88?3:4;
+  // Chương chọn vai trò chiếm một khoảng cuộn riêng nhưng không làm lệch bốn
+  // trạng thái animation cũ của người thuê.
+  const page=scrollY/chapters[1].offsetTop;const easing=x=>{const t=clamp(x);return t*t*(3-2*t)};const roomPreview=.12*easing((page-1.7)/.3)*(1-easing((page-2)/.3));target=clamp(page-clamp(page-1,0,1)+roomPreview,0,4.4);if(appLanding||document.body.dataset.branch!=='pending'&&scrollY>=document.documentElement.scrollHeight-innerHeight-2)target=4.4;
+  const idx=target<.65?0:document.body.dataset.branch==='pending'||scrollY<chapters[1].offsetTop*1.9?1:target<1.8?2:target<2.93?3:target<3.88?4:5;
   active=idx;
   chapters.forEach((s,i)=>{s.querySelector('.copy').style.opacity=i===idx?1:0;s.querySelector('.copy').style.visibility=i===idx?'visible':'hidden'});
   links.forEach((a,i)=>{a.classList.toggle('active',i===idx);if(i===idx)a.setAttribute('aria-current','step');else a.removeAttribute('aria-current')});
-  document.querySelector('#scene-number').textContent=`0${idx+1} / 05`;
-  document.querySelector('#scene-label').textContent=labels[idx];
+  document.querySelector('#scene-number').textContent=`0${idx+1} / 06`;document.body.dataset.activeChapter=chapters[idx].id;document.getElementById('landlord-stage').setAttribute('aria-hidden',String(document.body.dataset.branch!=='landlord'||idx===5));syncHeroLayout();
+  document.querySelector('#scene-label').textContent=(document.body.dataset.branch==='landlord'?landlordLabels:labels)[idx];
 }
 function goToChapter(id,behavior='smooth'){
   const index=chapters.findIndex(s=>s.id===id);if(index<0)return;
-  const y=stops[index]*chapters[1].offsetTop;
+  releaseAppLanding();const point=index===0?0:index===1?1.45:index>=2&&index<=4?index+.4:stops[index-1]+1;const y=index===5?document.documentElement.scrollHeight-innerHeight:point*chapters[1].offsetTop;if(index===5){const arrive=()=>{appArrival=0;scrollTo({top:document.documentElement.scrollHeight-innerHeight,behavior:'instant'});appLanding=true;getScroll();position=4.4};const start=performance.now();const check=()=>{if(Math.abs(scrollY-(document.documentElement.scrollHeight-innerHeight))<8||performance.now()-start>6500)arrive();else appArrival=requestAnimationFrame(check)};appArrival=requestAnimationFrame(check)}
   scrollTo({top:y,behavior:paused?'instant':behavior});
 }
-document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{
+window.__trooiGoToChapter=goToChapter;document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{
   const id=a.getAttribute('href').slice(1);if(!chapters.some(s=>s.id===id))return;
   e.preventDefault();history.pushState(null,'','#'+id);goToChapter(id);
 }));
@@ -28,7 +43,9 @@ addEventListener('scroll',getScroll,{passive:true});getScroll();
 if(location.hash)requestAnimationFrame(()=>goToChapter(location.hash.slice(1),'instant'));
 try{init()}catch(e){console.error(e);document.querySelector('#load-error').hidden=false}
 function init(){
-const renderer=new T.WebGLRenderer({alpha:true,antialias:true,powerPreference:'high-performance'});renderer.setPixelRatio(Math.min(devicePixelRatio,1.6));renderer.setClearColor(0xeef3e9,0);renderer.shadowMap.enabled=true;renderer.shadowMap.type=T.PCFSoftShadowMap;renderer.outputColorSpace=T.SRGBColorSpace;renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=1.18;host.appendChild(renderer.domElement);
+// Dùng nền WebGL đục cùng màu trang thay vì phụ thuộc alpha compositing. Một số
+// trình duyệt/GPU ghép canvas trong suốt thành một component trắng riêng biệt.
+const renderer=new T.WebGLRenderer({alpha:false,antialias:true,powerPreference:'high-performance'});renderer.setPixelRatio(Math.min(devicePixelRatio,1.6));renderer.setClearColor(0xeef3e9,1);renderer.shadowMap.enabled=true;renderer.shadowMap.type=T.PCFSoftShadowMap;renderer.outputColorSpace=T.SRGBColorSpace;renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=1.18;host.appendChild(renderer.domElement);
 const scene=new T.Scene(),camera=new T.PerspectiveCamera(36,1,.1,160);camera.position.set(16,15,21);camera.lookAt(0,0,0);scene.add(new T.HemisphereLight(0xffffff,0x6d8255,3));const sun=new T.DirectionalLight(0xfff6db,5);sun.position.set(-8,19,12);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);Object.assign(sun.shadow.camera,{left:-22,right:22,top:22,bottom:-22,near:.5,far:60});sun.shadow.normalBias=.04;sun.shadow.bias=-.0003;scene.add(sun);const fill=new T.DirectionalLight(0xd8f5ff,2);fill.position.set(10,8,-8);scene.add(fill);
 const mat=(c,r=.65)=>new T.MeshStandardMaterial({color:c,roughness:r});const palette={white:mat(0xf9f7e9),cream:mat(0xe8e7cd),green:mat(0xa5be72),dark:mat(0x284839),lime:mat(0xd7f57b),glass:mat(0x75aaa5,.25),wood:mat(0xbca27c),clay:mat(0xc28b67),grey:mat(0x82928b),skin:mat(0xe3b78e),blue:mat(0x718eaa),black:mat(0x172c25)};
 const boxGeo=new T.BoxGeometry(1,1,1);function box(g,w,h,d,x,y,z,m=palette.white){const o=new T.Mesh(boxGeo,m);o.scale.set(w,h,d);o.position.set(x,y,z);o.castShadow=true;o.receiveShadow=true;g.add(o);return o}function sphere(g,r,x,y,z,m){const o=new T.Mesh(new T.SphereGeometry(r,16,12),m);o.position.set(x,y,z);o.castShadow=true;g.add(o);return o}function cylinder(g,rt,rb,h,x,y,z,m){let o=new T.Mesh(new T.CylinderGeometry(rt,rb,h,14),m);o.position.set(x,y,z);o.castShadow=true;g.add(o);return o}function group(parent){let o=new T.Group();parent.add(o);return o}
@@ -149,7 +166,7 @@ const halo=new T.Mesh(new T.TorusGeometry(3.65,.015,8,100),palette.green);halo.p
 function resize(){renderer.setSize(host.clientWidth,host.clientHeight,false);camera.aspect=host.clientWidth/host.clientHeight;camera.updateProjectionMatrix();getScroll()}addEventListener('resize',resize);resize();
 let time=0,last=performance.now();const look=new T.Vector3(),camGoal=new T.Vector3();
 function render(now){requestAnimationFrame(render);if(document.hidden){last=now;return}const dt=Math.min((now-last)/1000,.05);last=now;if(!paused)time+=dt;position=paused?target:lerp(position,target,1-Math.exp(-dt*7));const p=position;
-const state=sceneState(p);city.visible=state.city;room.visible=state.room;transaction.visible=state.transaction;care.visible=state.care;end.visible=state.end;
+const state=sceneState(p);city.visible=state.city && scrollY<chapters[1].offsetTop*1.16;room.visible=state.room && document.body.dataset.branch==='tenant' && scrollY>=chapters[1].offsetTop*1.7;transaction.visible=state.transaction && document.body.dataset.branch==='tenant';care.visible=state.care && document.body.dataset.branch==='tenant';end.visible=state.end;
 const t=paused?0:time;
 if(city.visible){for(let i=0;i<terrainPosition.count;i++){const x=terrainPosition.getX(i),z=terrainPosition.getZ(i);terrainPosition.setY(i,wave(x,z,t))}terrainPosition.needsUpdate=true;terrainGeo.computeVertexNormals();const gp=gridGeo.attributes.position;for(let i=0;i<gp.count;i++)gp.setY(i,wave(gp.getX(i),gp.getZ(i),t)+.016);gp.needsUpdate=true;roads.forEach(r=>{let a=r.geometry.attributes.position;for(let i=0;i<a.count;i++)a.setY(i,wave(a.getX(i),a.getZ(i),t)+.026);a.needsUpdate=true});buildings.forEach(({b,x,z,phase,speed},i)=>{let v=paused?.85:smooth((Math.sin(t*speed+phase)+.5)/1.1);b.scale.y=Math.max(.001,v);b.scale.x=b.scale.z=.85+.15*v;b.position.y=wave(x,z,t)-.2*(1-v)});trees.forEach(({g,x,z})=>g.position.y=wave(x,z,t));locator.position.y=wave(1,2,t)+.12;locator.scale.setScalar(1+Math.sin(t*2)*.08);const c=smooth((p-.56)/.58);city.scale.setScalar(lerp(1,3.6,c));city.position.y=lerp(-.7,-19,c);city.rotation.y=-.15+t*.015*(1-c)}
 const roomIn=smooth((p-.72)/.42),roomOut=smooth((p-1.76)/.34);room.scale.setScalar(lerp(.05,1,roomIn)*(1-roomOut*.22));room.position.set(0,lerp(-3,0,roomIn)-roomOut*15,-roomOut*15);room.rotation.y=lerp(-.25,.04,roomIn);
