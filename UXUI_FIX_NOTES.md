@@ -87,3 +87,19 @@ T:\Tools\Python314\python.exe -m http.server 8080 --directory T:\exe2\TroOi-Land
 ```
 
 Mở `http://localhost:8080`, kiểm tra cả hai lựa chọn vai trò, sáu điểm điều hướng, nền canvas và responsive.
+
+## Bổ sung theo phản hồi UX/UI mới
+
+- Logo hiển thị theo Title Case “Trọ Ơi”.
+- Loại bỏ nút “Tạm dừng chuyển động”; website vẫn tự tôn trọng
+  `prefers-reduced-motion` của thiết bị.
+- Người thuê là flow mặc định, các chương không còn bị khóa trước khi bấm chọn vai.
+- Bộ chọn vai trò dùng click/keyboard thay cho pointer capture để không giữ thao tác
+  cuộn dọc trên touchpad và điện thoại.
+- Hóa đơn và điện thoại 3D được tăng kích thước, thêm viền, tăng tương phản và nâng
+  độ phân giải texture để phần chữ rõ hơn.
+- Cảnh Chủ trọ dùng vật liệu tương phản hơn, viền điện thoại dày hơn và giữ đổ bóng.
+- Nội dung chương 06 được viết lại theo thông điệp “Một ứng dụng, cả hành trình”.
+- Nút “Kể lại câu chuyện” được thay bằng nút mũi tên hướng lên ở góc phải.
+- Bổ sung theme sáng/Forest có lưu lựa chọn; cả ba canvas Three.js đồng bộ màu nền
+  theo theme để tránh xuất hiện mảng nền lệch màu.

@@ -6,7 +6,11 @@ const host=document.getElementById('landlord-stage');
 const roles=document.getElementById('roles');
 if(!host||!roles)throw new Error('Missing landlord scene host');
 const renderer=new T.WebGLRenderer({alpha:false,antialias:true,powerPreference:'high-performance'});
-renderer.setClearColor(0xeef3e9,1);
+const syncRendererTheme=()=>{
+  const color=document.documentElement.dataset.theme==='forest'?0x102a20:0xe7ede1;
+  renderer.setClearColor(color,1);
+  scene.background?.setHex(color);
+};
 renderer.setPixelRatio(Math.min(devicePixelRatio,1.6));
 renderer.outputColorSpace=T.SRGBColorSpace;
 renderer.toneMapping=T.ACESFilmicToneMapping;
@@ -17,6 +21,8 @@ host.appendChild(renderer.domElement);
 renderer.domElement.style.visibility='hidden';
 const scene=new T.Scene();
 scene.background=new T.Color(0xeef3e9);
+syncRendererTheme();
+document.addEventListener('trooi:theme-change',syncRendererTheme);
 const camera=new T.OrthographicCamera(-6.5,6.5,5,-5,.1,80);
 camera.position.set(8.5,7.4,12.5);
 camera.lookAt(0,1.4,0);
@@ -29,7 +35,7 @@ Object.assign(sun.shadow.camera,{left:-10,right:10,top:10,bottom:-10,near:.5,far
 sun.shadow.normalBias=.035;
 scene.add(sun);
 
-const mat=(color,extra={})=>new T.MeshStandardMaterial({color,roughness:.82,flatShading:true,transparent:true,...extra});
+const mat=(color,extra={})=>new T.MeshStandardMaterial({color,roughness:.7,flatShading:true,transparent:true,...extra});
 const basic=(color,extra={})=>new T.MeshBasicMaterial({color,transparent:true,...extra});
 function mesh(group,geometry,material,x=0,y=0,z=0){
   const m=new T.Mesh(geometry,material);
@@ -41,7 +47,7 @@ function texture(lines,{bg='#f9faf1',ink='#263f2e',accent='#709548'}={}){
   const c=document.createElement('canvas');c.width=512;c.height=720;
   const ctx=c.getContext('2d');
   ctx.fillStyle=bg;ctx.fillRect(0,0,512,720);
-  ctx.fillStyle='#243d2b';ctx.font='bold 45px Arial';ctx.fillText('trọơi',34,66);
+  ctx.fillStyle='#173f2d';ctx.font='bold 45px Arial';ctx.fillText('Trọ Ơi',34,66);
   ctx.fillStyle=accent;ctx.fillRect(34,86,444,5);
   let y=150;
   for(const [line,size=31,strong=false] of lines){
@@ -55,7 +61,7 @@ function billTexture(){
   const ctx=c.getContext('2d');
   ctx.fillStyle='#fbfcf5';ctx.fillRect(0,0,c.width,c.height);
   ctx.fillStyle='#315e43';ctx.fillRect(0,0,640,146);
-  ctx.fillStyle='#ffffff';ctx.font='bold 54px Arial';ctx.fillText('trọơi',42,86);
+  ctx.fillStyle='#ffffff';ctx.font='bold 54px Arial';ctx.fillText('Trọ Ơi',42,86);
   ctx.font='24px Arial';ctx.fillStyle='#dfedd7';ctx.fillText('QUẢN LÝ NHÀ TRỌ',43,124);
   ctx.fillStyle='#263f30';ctx.font='bold 44px Arial';ctx.fillText('Hóa đơn tháng 10',42,226);
   ctx.fillStyle='#627564';ctx.font='29px Arial';ctx.fillText('Phòng 203  ·  Kỳ 01–31/10',43,274);
@@ -82,7 +88,7 @@ function chatTexture(){
   const ctx=c.getContext('2d');
   ctx.fillStyle='#f8faf2';ctx.fillRect(0,0,640,1112);
   ctx.fillStyle='#315e43';ctx.fillRect(0,0,640,148);
-  ctx.fillStyle='#fff';ctx.font='bold 54px Arial';ctx.fillText('trọơi',42,86);
+  ctx.fillStyle='#fff';ctx.font='bold 54px Arial';ctx.fillText('Trọ Ơi',42,86);
   ctx.fillStyle='#deeed8';ctx.font='24px Arial';ctx.fillText('KẾT NỐI KHÁCH THUÊ',43,124);
   ctx.fillStyle='#2a4935';ctx.font='bold 44px Arial';ctx.fillText('Phòng 203',42,226);
   ctx.fillStyle='#68806d';ctx.font='28px Arial';ctx.fillText('Chủ trọ  ↔  Người thuê',43,275);
@@ -116,7 +122,7 @@ function panel(group,w,h,tex,x,y,z){
 }
 function phone(group,tex,x,y,z){
   const g=new T.Group();g.position.set(x,y,z);g.rotation.y=-.18;g.rotation.z=.055;group.add(g);
-  box(g,2.05,3.5,.16,0,0,0,mat(0x28523a));
+  box(g,2.16,3.62,.22,0,0,0,mat(0x173f2d,{roughness:.5}));
   panel(g,1.83,3.18,tex,0,0,.091);
   box(g,.29,.025,.02,0,1.66,.105,mat(0x102f25));
   return g;

@@ -9,7 +9,6 @@ if (!host || !chapter) throw new Error('Missing roles scene host');
 // Nền đục cùng màu trang tránh lỗi GPU/browser biến canvas trong suốt thành một
 // hình chữ nhật trắng khi phần tử đang transform hoặc thay đổi opacity.
 const renderer = new T.WebGLRenderer({ alpha: false, antialias: true, powerPreference: 'high-performance' });
-renderer.setClearColor(0xeef3e9, 1);
 renderer.setPixelRatio(Math.min(devicePixelRatio, 1.6));
 renderer.outputColorSpace = T.SRGBColorSpace;
 renderer.toneMapping = T.ACESFilmicToneMapping;
@@ -21,6 +20,13 @@ renderer.domElement.style.visibility='hidden';
 
 const scene = new T.Scene();
 scene.background=new T.Color(0xeef3e9);
+const syncRendererTheme=()=>{
+  const color=document.documentElement.dataset.theme==='forest'?0x102a20:0xe7ede1;
+  renderer.setClearColor(color,1);
+  scene.background.setHex(color);
+};
+syncRendererTheme();
+document.addEventListener('trooi:theme-change',syncRendererTheme);
 const camera = new T.OrthographicCamera(-5.8, 5.8, 2, -2, .1, 80);
 camera.position.set(8.5, 8, 12);
 camera.lookAt(0, 1.02, 0);
