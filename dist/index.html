@@ -1,16 +1,34 @@
 <!doctype html>
 <html lang="vi">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#eef3e9">
-  <title>Trọ Ơi — Bạn có trọ. Tôi có nơi về.</title>
-  <meta name="description" content="Trọ Ơi kết nối người thuê và chủ trọ trên cùng một nền tảng, từ chuyện tìm phòng đến quản lý dãy trọ.">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='20' fill='%23253629'/%3E%3Ctext x='13' y='45' font-size='40' fill='%23d3fa79' font-family='Arial'%3ET%3C/text%3E%3C/svg%3E">
-  <script type="module" crossorigin src="/assets/index-Bnwu2Xxz.js"></script>
-  <link rel="stylesheet" crossorigin href="/assets/index-B2RWEtM5.css">
-</head>
-<body>
-  <div id="root"></div>
-</body>
-</html>
+<head><script id="trooi-theme-init">try{document.documentElement.dataset.theme=localStorage.getItem('trooi-landing-theme')==='forest'?'forest':'light'}catch(_){document.documentElement.dataset.theme='light'}</script><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#eef3e9"><title>Trọ Ơi — Bạn có trọ. Tôi có nơi về.</title><meta name="description" content="Trọ Ơi kết nối người thuê và chủ trọ trên cùng một nền tảng, từ chuyện tìm phòng đến quản lý dãy trọ."><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='20' fill='%23253629'/%3E%3Ctext x='13' y='45' font-size='40' fill='%23d3fa79' font-family='Arial'%3ET%3C/text%3E%3C/svg%3E"><link rel="stylesheet" href="./style.css?v=5"></head>
+<body class="hero-view" data-branch="tenant">
+<a class="skip" href="#journey">Đi đến câu chuyện</a>
+<header><a class="brand" href="#start" aria-label="Trọ Ơi, về đầu trang">Trọ <span>Ơi</span><i>®</i></a><div class="header-actions"><button id="theme-toggle" type="button" aria-label="Chuyển sang chế độ tối" title="Chuyển sang chế độ tối" aria-pressed="false"><span class="theme-light" aria-hidden="true">☾</span><span class="theme-dark" aria-hidden="true">☀</span></button><a class="header-cta" href="#app">Gặp Trọ Ơi <span>↗</span></a></div></header>
+<!-- Canvas riêng của nhánh Chủ trọ; tách khỏi canvas người thuê để hai timeline không ghi đè nhau. -->
+<div id="landlord-stage" role="img" aria-label="Câu chuyện 3D cho chủ trọ: đăng phòng, chốt điện nước và kết nối khách thuê."></div>
+<div id="stage" role="img" aria-label="Thành phố 3D biến đổi thành căn phòng, hóa đơn, điện thoại và cảnh sửa máy lạnh theo thao tác cuộn."></div>
+<div class="ambient-label" aria-hidden="true"><span id="scene-number">01 / 05</span><span id="scene-label">MỘT THÀNH PHỐ. NGÀN KHỞI ĐẦU.</span></div>
+<main id="journey">
+<section id="start" class="chapter" data-chapter="0"><div class="copy"><p class="eyebrow"><span></span> MỘT NỀN TẢNG. HAI NHU CẦU.</p><h1><span>Bạn có trọ.</span><span>Tôi có <em>nơi về.</em></span></h1><p class="intro">Tìm một nơi ở phù hợp hay quản lý dãy trọ của riêng mình — Trọ Ơi kết nối người thuê và chủ trọ trên cùng một nền tảng.</p><div class="hero-actions"><a class="pill" href="#roles">Khám phá ngay <span>↗</span></a><a class="pill pill-outline" href="#app">Tìm hiểu ứng dụng <span>↓</span></a></div><div class="scroll-cue"><span>↓</span> Cuộn để mở câu chuyện</div></div></section>
+<section id="roles" class="chapter" data-chapter="1"><div class="copy">
+  <div class="roles-heading"><h2><span>Một ứng dụng.</span><span><em>Đủ hai vai trò.</em></span></h2><p class="roles-summary">Dù bạn đang tìm phòng hay có phòng cho thuê, Trọ Ơi hướng tới việc giúp mọi công việc trọ trở nên rõ ràng và thuận tiện.</p></div>
+  <div class="role-switch" role="group" aria-label="Chọn vai trò"><button type="button" data-role="tenant" aria-pressed="true">Tôi là người thuê</button><button type="button" data-role="landlord" aria-pressed="false">Tôi là chủ trọ</button></div>
+  <div class="role-context role-context--landlord"><strong>CHỦ TRỌ</strong><p>Quản lý dãy trọ và các khoản thu rõ ràng hơn.</p></div>
+  <div id="roles-scene" class="roles-scene" role="img" aria-label="Minh họa 3D: nhân vật mũ xanh và mũ nâu đi về phía nhau, trao hợp đồng rồi ký khi cuộn trang."></div>
+  <div class="role-context role-context--tenant"><strong>NGƯỜI THUÊ</strong><p>Tìm phòng và theo dõi việc ở trọ dễ dàng hơn.</p></div>
+</div></section>
+<section id="room" class="chapter" data-chapter="2"><div class="copy"><p class="eyebrow">01 — TÌM THẤY NƠI CỦA MÌNH</p><h2><span>Từ một căn phòng.</span><span>Thành <em>góc riêng.</em></span></h2><p class="intro">Chiếc giường để nghỉ. Góc bàn để mơ.<br>Thấy rõ không gian, tiện nghi và thông tin phòng trước khi bắt đầu một cuộc sống mới.</p><div class="details"><span>Không gian</span><span>Tiện nghi</span><span>Thông tin rõ ràng</span></div></div></section>
+<section id="bill" class="chapter" data-chapter="3"><div class="copy"><p class="eyebrow">02 — NHẸ ĐI CHUYỆN GIẤY TỜ</p><h2><span>Mọi khoản tiền.</span><span>Một chỗ. <em>Rõ ràng.</em></span></h2><p class="intro">Tiền phòng, điện, nước — dễ theo dõi.<br>Hóa đơn và lịch sử thanh toán được lưu trong ứng dụng, để bạn dành tâm trí cho những điều đáng sống hơn.</p><div class="details"><span>Tiền phòng</span><span>Điện nước</span><span>Lịch sử thanh toán</span></div><p class="small-note">Hóa đơn trong câu chuyện là dữ liệu minh họa.</p></div></section>
+<section id="care" class="chapter" data-chapter="4"><div class="copy"><p class="eyebrow">03 — AN TÂM CẢ SAU KHI DỌN ĐẾN</p><h2><span>Có chút trục trặc?</span><span><em>Có người lo.</em></span></h2><p class="intro">Máy lạnh không mát, vòi nước bị rò?<br>Gửi yêu cầu trên app. Kết nối chủ trọ và thợ dịch vụ, cùng theo dõi việc sửa chữa.</p><div class="details"><span>Báo sự cố</span><span>Kết nối thợ</span><span>Theo dõi xử lý</span></div></div></section>
+<section id="post" hidden class="chapter" data-chapter="2"><div class="copy"><p class="eyebrow">01 — LẤP ĐẦY PHÒNG TRỐNG</p><h2><span>Phòng vừa trống.</span><span>Khách vào <em>ngay.</em></span></h2><p class="intro">Đăng tin một lần, tiếp cận người thuê thực tế tức thì. Hình ảnh rõ ràng, thông tin minh bạch giúp chốt khách nhanh chóng.</p><div class="details"><span>Đăng tin nhanh</span><span>Đúng khách</span><span>Không trôi bài</span></div></div></section>
+<section id="utilities" hidden class="chapter" data-chapter="3"><div class="copy"><p class="eyebrow">02 — CHỐT SỐ ĐIỆN NƯỚC</p><h2><span>Quét công tơ,</span><span>“bơ” luôn <em>sổ sách!</em></span></h2><p class="intro">Chốt số một giây — “bơ” luôn sổ sách. Mọi hóa đơn và lịch sử thanh toán được ứng dụng tự động lo liệu, trả lại cho bạn sự bình yên không cần cộng trừ nhân chia.</p><div class="details"><span>Quét công tơ</span><span>Tính tiền tự động</span><span>Hóa đơn tức thì</span><span>Theo dõi thanh toán</span></div><p class="small-note">Hóa đơn trong câu chuyện là dữ liệu minh họa.</p></div></section>
+<section id="messages" hidden class="chapter" data-chapter="4"><div class="copy"><p class="eyebrow">03 — KẾT NỐI KHÁCH THUÊ</p><h2><span>Mọi phản hồi.</span><span>Gom <em>một mối.</em></span></h2><p class="intro">Kênh trao đổi riêng biệt. Tiếp nhận phản ánh và thông báo nội quy khu trọ tập trung, không còn lo thất lạc tin nhắn riêng.</p><div class="details"><span>Chat nội bộ</span><span>Báo sửa chữa</span><span>Thông báo chung</span></div></div></section>
+<section id="app" class="chapter" data-chapter="5"><div class="copy"><p class="eyebrow">TRỌ ƠI — MỘT ỨNG DỤNG, CẢ HÀNH TRÌNH</p><h2><span>Mọi việc ở trọ.</span><span><em>Gọn trong một nơi.</em></span></h2><p class="intro">Từ tìm phòng, quản lý khoản thu đến báo và theo dõi sự cố — Trọ Ơi kết nối người thuê, chủ trọ và thợ dịch vụ trong một hành trình rõ ràng.</p><div class="coming"><span>Ứng dụng đang được phát triển</span><strong>Hẹn gặp bạn tại Trọ Ơi.</strong></div><div class="store-options" aria-label="Ứng dụng sắp ra mắt"><div class="store-badge"><small>SẮP RA MẮT TRÊN</small><strong>Google Play</strong></div><div class="store-badge"><small>SẮP RA MẮT TRÊN</small><strong>App Store</strong></div></div><a class="story-to-top" href="#start" aria-label="Kể lại câu chuyện từ đầu" title="Kể lại câu chuyện">↑</a></div></section>
+</main>
+<footer><span class="footer-name">TÌM ĐƯỢC TRỌ. CHẠM ĐƯỢC NHÀ.</span><div class="chapter-nav" aria-label="Chọn chương"><a href="#start" class="active" aria-label="Mở đầu">01</a><a href="#roles" aria-label="Hai vai trò">02</a><a href="#room" aria-label="Căn phòng">03</a><a href="#bill" aria-label="Hóa đơn">04</a><a href="#care" aria-label="Sửa chữa">05</a><a href="#app" aria-label="Ứng dụng">06</a></div><span class="footer-spacer" aria-hidden="true"></span></footer>
+<div id="load-error" hidden>Thiết bị chưa hiển thị được khung cảnh 3D. Bạn vẫn có thể cuộn để đọc toàn bộ câu chuyện Trọ Ơi.</div>
+<!-- Điều phối chọn vai trò phải chạy trước module story để thiết lập trạng thái chương ban đầu. -->
+<script src="./branch-ui.js?v=4"></script>
+<script type="module" src="./story.js?v=5"></script>
+<script src="./theme-interactions.js?v=4"></script>
+</body></html>
