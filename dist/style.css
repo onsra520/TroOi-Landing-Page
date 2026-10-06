@@ -177,3 +177,50 @@ html:not([data-theme="forest"]) #landlord-stage canvas,
 html:not([data-theme="forest"]) #roles .roles-scene,
 html:not([data-theme="forest"]) #roles .roles-scene canvas{background:#e7ede1}
 html:not([data-theme="forest"]) #start .pill-outline{background:#e7ede1c9}
+
+/* Readability pass: keep the brand character while making long-form UI copy easier to scan. */
+:root{
+ --font-display:'Be Vietnam Pro','Segoe UI',Arial,sans-serif;
+ --font-readable:system-ui,-apple-system,'Segoe UI',Arial,sans-serif;
+ font-family:var(--font-readable);
+ --text-primary:#1f3929;
+ --text-secondary:#405744;
+}
+body{font-family:var(--font-readable);font-weight:450;overflow-x:hidden;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+.brand,h1,h2,.roles-heading h2,.store-badge strong{font-family:var(--font-display)}
+h1,h2{font-weight:600;letter-spacing:-.04em;line-height:1.16;color:var(--text-primary)}
+.intro{font-size:17px;line-height:1.72;font-weight:450;color:var(--text-secondary);max-width:430px}
+.eyebrow{font-size:12px;line-height:1.5;font-weight:700;letter-spacing:1.15px;color:#38513e}
+.details span{font-size:13px;line-height:1.35;font-weight:550;color:#344d3b;border-color:#aebda7}
+.small-note{font-size:13px;line-height:1.55;font-weight:450;color:#4d6250}
+.coming{font-size:14px;line-height:1.55}
+.coming strong{font-weight:600}
+nav,.header-cta,.pill{font-weight:600}
+.footer-name,.ambient-label,.scroll-cue,#motion{font-weight:600}
+#roles .roles-heading .roles-summary,#roles .role-context{color:var(--text-secondary);font-weight:450}
+
+html[data-theme="forest"]{
+ --text-primary:#f2f8ef;
+ --text-secondary:#d3e2d2;
+}
+html[data-theme="forest"] .intro,
+html[data-theme="forest"] .coming>span,
+html[data-theme="forest"] .small-note,
+html[data-theme="forest"] .footer-name,
+html[data-theme="forest"] .ambient-label,
+html[data-theme="forest"] #roles .roles-summary,
+html[data-theme="forest"] #roles .role-context{color:var(--text-secondary)}
+html[data-theme="forest"] .eyebrow{color:#dcebd8}
+html[data-theme="forest"] .details span{color:#e2eee0;border-color:#78917d}
+html[data-theme="forest"] #start .eyebrow{color:#294632;text-shadow:0 1px 2px #fff,0 0 7px #ffffffd6}
+
+@media(max-width:800px){
+ h1,h2{letter-spacing:-.032em;line-height:1.18}
+ .intro{font-size:15.5px;line-height:1.68;max-width:360px}
+ .eyebrow{font-size:10.5px;line-height:1.45;letter-spacing:.85px}
+ .details span{font-size:11.5px;line-height:1.35;padding:8px 11px}
+ .small-note{font-size:11.5px;line-height:1.5}
+ .coming{font-size:12.5px}
+ #roles .roles-heading .roles-summary{font-size:14px;line-height:1.6}
+ #roles .role-switch button{font-size:12px}
+}
