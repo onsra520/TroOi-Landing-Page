@@ -3,6 +3,7 @@ import { useTheme } from '../hooks/useTheme';
 import { useBranch } from '../hooks/useBranch';
 import * as THREE from 'three';
 import { smooth, lerp } from '../utils/math';
+import logoImgUrl from '/trooi-logo-main.png';
 
 export default function LandlordScene() {
   const mountRef = useRef<HTMLDivElement>(null);
@@ -44,7 +45,7 @@ export default function LandlordScene() {
     let logoImg: HTMLImageElement | null = null;
     const logoPromise = (async () => {
       logoImg = new Image();
-      logoImg.src = '/trooi-logo-main.png';
+      logoImg.src = logoImgUrl;
       await logoImg.decode();
     })();
 

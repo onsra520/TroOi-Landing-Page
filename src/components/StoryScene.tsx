@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
+import logoImgUrl from '/trooi-logo-main.png';
 
 interface SceneState {
   city: boolean;
@@ -629,7 +630,7 @@ export default function StoryScene() {
 
     // Preload logo image
     const logoImg = new Image();
-    logoImg.src = '/trooi-logo-main.png';
+    logoImg.src = logoImgUrl;
     
     // Store textures to be created after logo loads
     let receiptTex: THREE.CanvasTexture;

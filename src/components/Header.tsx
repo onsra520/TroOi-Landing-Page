@@ -1,4 +1,5 @@
 import { useTheme } from '../hooks/useTheme';
+import logoImg from '/trooi-logo-main.png';
 
 export default function Header() {
   const { theme, toggleTheme } = useTheme();
@@ -6,7 +7,7 @@ export default function Header() {
   return (
     <header>
       <a className="brand" href="#start" aria-label="Trọ Ơi, về đầu trang">
-        <img src="/trooi-logo-main.png" alt="Trọ Ơi" height="42" />
+        <img src={logoImg} alt="Trọ Ơi" height="42" />
       </a>
       
       <div className="header-actions">
