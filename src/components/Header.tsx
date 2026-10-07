@@ -6,8 +6,7 @@ export default function Header() {
   return (
     <header>
       <a className="brand" href="#start" aria-label="Trọ Ơi, về đầu trang">
-        <img src="/trooi-logo-main.png" alt="Trọ Ơi" height="32" />
-        <i>®</i>
+        <img src="/trooi-logo-main.png" alt="Trọ Ơi" height="42" />
       </a>
       
       <div className="header-actions">

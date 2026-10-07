@@ -40,6 +40,14 @@ export default function LandlordScene() {
     camera.position.set(8.5, 7.4, 12.5);
     camera.lookAt(0, 1.4, 0);
 
+    // Load logo
+    let logoImg: HTMLImageElement | null = null;
+    const logoPromise = (async () => {
+      logoImg = new Image();
+      logoImg.src = '/trooi-logo-main.png';
+      await logoImg.decode();
+    })();
+
     // Lighting
     scene.add(new THREE.HemisphereLight(0xffffff, 0xc7d6b5, 3));
     const sun = new THREE.DirectionalLight(0xfff6e5, 3.25);
@@ -97,11 +105,7 @@ export default function LandlordScene() {
       ctx.fillStyle = bg;
       ctx.fillRect(0, 0, 512, 720);
       
-      // Debug: draw a simple red rectangle to verify canvas works
-      ctx.fillStyle = 'red';
-      ctx.fillRect(50, 50, 100, 100);
-      
-      // Header - try different approach
+      // Header
       ctx.fillStyle = '#173f2d';
       ctx.textAlign = 'left';
       ctx.textBaseline = 'alphabetic';
@@ -122,8 +126,97 @@ export default function LandlordScene() {
         y += size + 31;
       }
       
-      // Debug log
-      console.log('Canvas created:', c.width, 'x', c.height);
+      const t = new THREE.CanvasTexture(c);
+      t.colorSpace = THREE.SRGBColorSpace;
+      t.anisotropy = renderer.capabilities.getMaxAnisotropy();
+      t.needsUpdate = true;
+      t.minFilter = THREE.LinearFilter;
+      t.magFilter = THREE.LinearFilter;
+      return t;
+    }
+
+    function listingTexture() {
+      const c = document.createElement('canvas');
+      c.width = 640;
+      c.height = 1112;
+      const ctx = c.getContext('2d', { willReadFrequently: false })!;
+      
+      // Background
+      ctx.fillStyle = '#f5f8ef';
+      ctx.fillRect(0, 0, 640, 1112);
+      
+      // Header bar
+      ctx.fillStyle = '#315e43';
+      ctx.fillRect(0, 0, 640, 120);
+      
+      // Time
+      ctx.fillStyle = '#ffffff';
+      ctx.font = '600 23px Arial';
+      ctx.textBaseline = 'top';
+      ctx.fillText('9:41', 42, 44);
+      
+      // Room card
+      ctx.fillStyle = '#fff';
+      ctx.beginPath();
+      ctx.roundRect(32, 160, 576, 340, 24);
+      ctx.fill();
+      
+      // Status badge
+      ctx.fillStyle = '#e8f5d9';
+      ctx.beginPath();
+      ctx.roundRect(56, 188, 200, 44, 22);
+      ctx.fill();
+      ctx.fillStyle = '#466f32';
+      ctx.font = 'bold 22px Arial';
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('ĐANG CHO THUÊ', 80, 210);
+      
+      // Room title
+      ctx.fillStyle = '#173f2d';
+      ctx.font = 'bold 46px Arial';
+      ctx.textBaseline = 'top';
+      ctx.fillText('Phòng trọ cao cấp', 56, 270);
+      
+      // Room details
+      ctx.fillStyle = '#53665a';
+      ctx.font = '600 29px Arial';
+      ctx.fillText('P.203 - 25m² - Tầng 3', 56, 335);
+      
+      // Amenities
+      ctx.fillStyle = '#466f32';
+      ctx.beginPath();
+      ctx.roundRect(56, 400, 150, 46, 23);
+      ctx.fill();
+      ctx.fillStyle = '#fff';
+      ctx.font = '600 22px Arial';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('Ban công', 70, 423);
+      
+      // Room preview area
+      ctx.fillStyle = '#e0e8d8';
+      ctx.fillRect(56, 480, 528, 180);
+      
+      // Price section
+      ctx.fillStyle = '#173f2d';
+      ctx.font = 'bold 48px Arial';
+      ctx.textBaseline = 'top';
+      ctx.fillText('3.500.000 đ', 56, 720);
+      
+      ctx.fillStyle = '#53665a';
+      ctx.font = '600 24px Arial';
+      ctx.fillText('/tháng', 56, 780);
+      
+      // CTA button
+      ctx.fillStyle = '#173f2d';
+      ctx.beginPath();
+      ctx.roundRect(56, 850, 528, 88, 44);
+      ctx.fill();
+      ctx.fillStyle = '#fff';
+      ctx.font = 'bold 32px Arial';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('Liên hệ chủ trọ', 320, 894);
       
       const t = new THREE.CanvasTexture(c);
       t.colorSpace = THREE.SRGBColorSpace;
@@ -131,6 +224,8 @@ export default function LandlordScene() {
       t.needsUpdate = true;
       t.minFilter = THREE.LinearFilter;
       t.magFilter = THREE.LinearFilter;
+      t.flipY = true;
+      
       return t;
     }
 
@@ -140,77 +235,112 @@ export default function LandlordScene() {
       c.height = 1112;
       const ctx = c.getContext('2d', { willReadFrequently: false })!;
       
-      // Clear canvas
-      ctx.clearRect(0, 0, c.width, c.height);
-      
       // Background
-      ctx.fillStyle = '#fbfcf5';
+      ctx.fillStyle = '#f5f8ef';
       ctx.fillRect(0, 0, c.width, c.height);
       
-      // Header
+      // Header bar
       ctx.fillStyle = '#315e43';
-      ctx.fillRect(0, 0, 640, 146);
-      ctx.fillStyle = '#ffffff';
-      ctx.font = 'bold 54px Arial, sans-serif';
+      ctx.fillRect(0, 0, 640, 148);
+      
+      // Logo
+      if (logoImg) {
+        const logoHeight = 72;
+        const logoWidth = (logoImg.width / logoImg.height) * logoHeight;
+        ctx.drawImage(logoImg, 36, 38, logoWidth, logoHeight);
+      }
+      
+      ctx.font = '26px system-ui, Arial';
+      ctx.fillStyle = '#deeed8';
       ctx.textBaseline = 'top';
-      ctx.fillText('Trọ Ơi', 42, 86);
-      ctx.font = '24px Arial, sans-serif';
-      ctx.fillStyle = '#dfedd7';
-      ctx.fillText('QUẢN LÝ NHÀ TRỌ', 43, 124);
+      ctx.fillText('QUẢN LÝ NHÀ TRỌ', 42, 124);
       
-      // Title
+      // Title section
       ctx.fillStyle = '#263f30';
-      ctx.font = 'bold 44px Arial, sans-serif';
-      ctx.fillText('Hóa đơn tháng 10', 42, 226);
+      ctx.font = 'bold 46px system-ui, Arial';
+      ctx.textBaseline = 'top';
+      ctx.fillText('Quét số điện nước', 42, 210);
       ctx.fillStyle = '#627564';
-      ctx.font = '29px Arial, sans-serif';
-      ctx.fillText('Phòng 203  ·  Kỳ 01–31/10', 43, 274);
+      ctx.font = '600 29px system-ui, Arial';
+      ctx.fillText('Cập nhật số công tơ', 42, 268);
       
-      // Line separator
-      ctx.strokeStyle = '#d7e3d1';
-      ctx.lineWidth = 2;
+      // Electric meter card
+      ctx.fillStyle = '#fff';
       ctx.beginPath();
-      ctx.moveTo(42, 320);
-      ctx.lineTo(598, 320);
-      ctx.stroke();
-
-      const rows: Array<[string, string, string]> = [
-        ['Tiền phòng', '2.500.000 đ', 'Tháng 10 / 2026'],
-        ['Tiền điện', '450.000 đ', '150 kWh × 3.000 đ'],
-        ['Tiền nước', '300.000 đ', '10 m³ × 30.000 đ']
-      ];
-      rows.forEach(([label, amount, note], i) => {
-        const y = 384 + i * 174;
-        ctx.fillStyle = '#2e4935';
-        ctx.font = 'bold 37px Arial, sans-serif';
-        ctx.textBaseline = 'top';
-        ctx.fillText(label, 44, y);
-        ctx.textAlign = 'right';
-        ctx.font = 'bold 37px Arial, sans-serif';
-        ctx.fillText(amount, 595, y);
-        ctx.textAlign = 'left';
-        ctx.fillStyle = '#718171';
-        ctx.font = '26px Arial, sans-serif';
-        ctx.fillText(note, 44, y + 48);
-        ctx.strokeStyle = '#e1e9dd';
-        ctx.beginPath();
-        ctx.moveTo(43, y + 88);
-        ctx.lineTo(597, y + 88);
-        ctx.stroke();
-      });
-
-      // Total box
+      ctx.roundRect(32, 360, 576, 180, 20);
+      ctx.fill();
+      
+      // Electric icon
+      ctx.fillStyle = '#ffc107';
+      ctx.font = '42px system-ui, Arial';
+      ctx.fillText('⚡', 56, 415);
+      
+      // Electric meter title
+      ctx.fillStyle = '#263f30';
+      ctx.font = 'bold 32px system-ui, Arial';
+      ctx.fillText('Tiền điện', 120, 400);
+      ctx.fillStyle = '#627564';
+      ctx.font = '26px system-ui, Arial';
+      ctx.fillText('Số cũ: 1.250 kWh', 120, 440);
+      
+      // New number
+      ctx.fillStyle = '#173f2d';
+      ctx.font = 'bold 36px system-ui, Arial';
+      ctx.textAlign = 'right';
+      ctx.fillText('+ 450.000 đ', 580, 455);
+      ctx.textAlign = 'left';
+      
+      // Water meter card
+      ctx.fillStyle = '#fff';
+      ctx.beginPath();
+      ctx.roundRect(32, 560, 576, 180, 20);
+      ctx.fill();
+      
+      // Water icon
+      ctx.fillStyle = '#4fc3f7';
+      ctx.font = '42px system-ui, Arial';
+      ctx.fillText('💧', 56, 615);
+      
+      // Water meter title
+      ctx.fillStyle = '#263f30';
+      ctx.font = 'bold 32px system-ui, Arial';
+      ctx.fillText('Tiền nước', 120, 600);
+      ctx.fillStyle = '#627564';
+      ctx.font = '26px system-ui, Arial';
+      ctx.fillText('Số cũ: 42 m³', 120, 640);
+      
+      // Calculated price
+      ctx.fillStyle = '#173f2d';
+      ctx.font = 'bold 36px system-ui, Arial';
+      ctx.textAlign = 'right';
+      ctx.fillText('+ 300.000 đ', 580, 655);
+      ctx.textAlign = 'left';
+      
+      // Summary box
       ctx.fillStyle = '#e6f2d9';
       ctx.beginPath();
-      ctx.roundRect(32, 913, 576, 134, 24);
+      ctx.roundRect(32, 800, 576, 130, 20);
       ctx.fill();
       ctx.fillStyle = '#496750';
-      ctx.font = 'bold 29px Arial, sans-serif';
-      ctx.textBaseline = 'top';
-      ctx.fillText('TỔNG CỘNG', 56, 970);
-      ctx.fillStyle = '#285039';
-      ctx.font = 'bold 47px Arial, sans-serif';
-      ctx.fillText('3.250.000 đ', 55, 1021);
+      ctx.font = 'bold 28px system-ui, Arial';
+      ctx.fillText('Tiền phòng: 3.000.000 đ', 56, 840);
+      ctx.fillStyle = '#173f2d';
+      ctx.font = 'bold 42px system-ui, Arial';
+      ctx.textAlign = 'right';
+      ctx.fillText('Tổng: 3.750.000 đ', 588, 885);
+      ctx.textAlign = 'left';
+      
+      // CTA button
+      ctx.fillStyle = '#173f2d';
+      ctx.beginPath();
+      ctx.roundRect(32, 960, 576, 90, 45);
+      ctx.fill();
+      ctx.fillStyle = '#fff';
+      ctx.font = 'bold 34px system-ui, Arial';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('Gửi hóa đơn', 320, 1005);
+      ctx.textAlign = 'left';
 
       const t = new THREE.CanvasTexture(c);
       t.colorSpace = THREE.SRGBColorSpace;
@@ -218,6 +348,7 @@ export default function LandlordScene() {
       t.needsUpdate = true;
       t.minFilter = THREE.LinearFilter;
       t.magFilter = THREE.LinearFilter;
+      t.flipY = true;
       return t;
     }
 
@@ -227,127 +358,127 @@ export default function LandlordScene() {
       c.height = 1112;
       const ctx = c.getContext('2d', { willReadFrequently: false })!;
       
-      // Clear canvas
-      ctx.clearRect(0, 0, 640, 1112);
-      
       // Background
-      ctx.fillStyle = '#f8faf2';
-      ctx.fillRect(0, 0, 640, 1112);
+      ctx.fillStyle = '#f5f8ef';
+      ctx.fillRect(0, 0, c.width, c.height);
       
       // Header
       ctx.fillStyle = '#315e43';
-      ctx.fillRect(0, 0, 640, 148);
-      ctx.fillStyle = '#fff';
-      ctx.font = 'bold 54px Arial, sans-serif';
-      ctx.textBaseline = 'top';
-      ctx.fillText('Trọ Ơi', 42, 86);
+      ctx.fillRect(0, 0, c.width, 148);
+      
+      // Logo
+      if (logoImg) {
+        const logoHeight = 72;
+        const logoWidth = (logoImg.width / logoImg.height) * logoHeight;
+        ctx.drawImage(logoImg, 36, 38, logoWidth, logoHeight);
+      }
+      
+      ctx.font = '26px system-ui, Arial';
       ctx.fillStyle = '#deeed8';
-      ctx.font = '24px Arial, sans-serif';
-      ctx.fillText('KẾT NỐI KHÁCH THUÊ', 43, 124);
+      ctx.textBaseline = 'top';
+      ctx.fillText('KẾT NỐI KHÁCH THUÊ', 42, 124);
       
-      // Title
-      ctx.fillStyle = '#2a4935';
-      ctx.font = 'bold 44px Arial, sans-serif';
-      ctx.fillText('Phòng 203', 42, 226);
-      ctx.fillStyle = '#68806d';
-      ctx.font = '28px Arial, sans-serif';
-      ctx.fillText('Chủ trọ  ↔  Người thuê', 43, 275);
-      
-      // Line separator
-      ctx.strokeStyle = '#dce7d8';
-      ctx.lineWidth = 2;
+      // Chat header with room info
+      ctx.fillStyle = '#fff';
       ctx.beginPath();
-      ctx.moveTo(42, 312);
-      ctx.lineTo(598, 312);
-      ctx.stroke();
-
+      ctx.roundRect(32, 180, 576, 120, 20);
+      ctx.fill();
+      
+      ctx.fillStyle = '#263f30';
+      ctx.font = 'bold 38px system-ui, Arial';
+      ctx.textBaseline = 'top';
+      ctx.fillText('Phòng 203', 56, 205);
+      
+      ctx.fillStyle = '#627564';
+      ctx.font = '600 28px system-ui, Arial';
+      ctx.fillText('Chủ trọ ↔ Người thuê', 56, 255);
+      
+      // Message bubbles
       function bubble(x: number, y: number, w: number, h: number, bg: string, label: string, lines: string[], ink: string) {
         ctx.fillStyle = bg;
         ctx.beginPath();
         ctx.roundRect(x, y, w, h, 25);
         ctx.fill();
         ctx.fillStyle = ink;
-        ctx.font = 'bold 24px Arial, sans-serif';
+        ctx.font = 'bold 26px system-ui, Arial';
         ctx.textBaseline = 'top';
-        ctx.fillText(label, x + 26, y + 43);
-        ctx.font = '32px Arial, sans-serif';
-        lines.forEach((line, i) => ctx.fillText(line, x + 26, y + 91 + i * 43));
+        ctx.fillText(label, x + 28, y + 35);
+        ctx.font = '34px system-ui, Arial';
+        lines.forEach((line, i) => ctx.fillText(line, x + 28, y + 82 + i * 46));
       }
 
-      bubble(33, 348, 510, 184, '#ebf1e8', 'NGƯỜI THUÊ', ['Chào anh, vòi nước phòng em', 'đang bị rò ạ.'], '#34543b');
-      bubble(118, 565, 489, 187, '#d8ebcb', 'CHỦ TRỌ', ['Mình đã nhận tin. Thợ sẽ', 'ghé lúc 16:00 nhé.'], '#28513a');
-      bubble(33, 789, 440, 136, '#ebf1e8', 'NGƯỜI THUÊ', ['Dạ, em cảm ơn anh!'], '#34543b');
+      bubble(35, 350, 510, 170, '#fff', 'NGƯỜI THUÊ', ['Chào anh, vòi nước phòng em', 'đang bị rò ạ.'], '#34543b');
+      bubble(100, 555, 500, 165, '#d8ebcb', 'CHỦ TRỌ', ['Mình đã nhận tin. Thợ sẽ', 'ghé lúc 16:00 nhé.'], '#28513a');
+      bubble(35, 755, 440, 125, '#fff', 'NGƯỜI THUÊ', ['Dạ, em cảm ơn anh!'], '#34543b');
+      bubble(100, 910, 500, 135, '#d8ebcb', 'CHỦ TRỌ', ['Chúc bạn một ngày', 'tốt lành nhé.'], '#28513a');
       
-      // Input box
-      ctx.fillStyle = '#edf4e9';
-      ctx.beginPath();
-      ctx.roundRect(32, 982, 576, 82, 38);
-      ctx.fill();
-      ctx.fillStyle = '#7c947d';
-      ctx.font = '29px Arial, sans-serif';
-      ctx.textBaseline = 'top';
-      ctx.fillText('Nhắn tin...', 64, 1035);
-      ctx.fillStyle = '#4f8053';
-      ctx.beginPath();
-      ctx.arc(555, 1023, 29, 0, Math.PI * 2);
-      ctx.fill();
+      // Input area
       ctx.fillStyle = '#fff';
-      ctx.font = 'bold 31px Arial, sans-serif';
-      ctx.fillText('↗', 544, 1034);
-
+      ctx.beginPath();
+      ctx.roundRect(32, 1060, 576, 58, 29);
+      ctx.fill();
+      ctx.fillStyle = '#9aa89b';
+      ctx.font = '28px system-ui, Arial';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('Nhắn tin...', 64, 1089);
+      
       const t = new THREE.CanvasTexture(c);
       t.colorSpace = THREE.SRGBColorSpace;
       t.anisotropy = renderer.capabilities.getMaxAnisotropy();
       t.needsUpdate = true;
       t.minFilter = THREE.LinearFilter;
       t.magFilter = THREE.LinearFilter;
+      t.flipY = true;
       return t;
     }
-
+      
     function conversationTexture(label: string, lines: string[], owner = false) {
       const c = document.createElement('canvas');
       c.width = 576;
       c.height = 256;
       const ctx = c.getContext('2d', { willReadFrequently: false })!;
       
-      // Clear canvas
-      ctx.clearRect(0, 0, 576, 256);
-      
       // Background
-      ctx.fillStyle = owner ? '#dceecf' : '#fffef7';
+      ctx.fillStyle = owner ? '#d8ebcb' : '#ffffff';
       ctx.fillRect(0, 0, 576, 256);
       
-      // Side indicator
-      ctx.fillStyle = owner ? '#5b8d59' : '#8fb58b';
-      ctx.fillRect(0, 0, 12, 256);
-      
       // Label
-      ctx.fillStyle = '#4c6f50';
-      ctx.font = 'bold 29px Arial, sans-serif';
+      ctx.fillStyle = owner ? '#28513a' : '#34543b';
+      ctx.font = 'bold 28px Arial, sans-serif';
       ctx.textBaseline = 'top';
-      ctx.fillText(label, 39, 65);
+      ctx.fillText(label, 28, 32);
       
       // Content lines
-      ctx.fillStyle = '#294733';
-      ctx.font = '35px Arial, sans-serif';
-      lines.forEach((line, i) => ctx.fillText(line, 39, 131 + i * 49));
+      ctx.fillStyle = owner ? '#28513a' : '#34543b';
+      ctx.font = '34px Arial, sans-serif';
+      lines.forEach((line, i) => ctx.fillText(line, 28, 88 + i * 46));
       
       const t = new THREE.CanvasTexture(c);
       t.colorSpace = THREE.SRGBColorSpace;
       t.needsUpdate = true;
       t.minFilter = THREE.LinearFilter;
       t.magFilter = THREE.LinearFilter;
+      t.flipY = true;
       return t;
     }
 
     function panel(group: THREE.Group, w: number, h: number, tex: THREE.Texture, x: number, y: number, z: number) {
+      const material = new THREE.MeshBasicMaterial({ 
+        map: tex, 
+        transparent: false,
+        side: THREE.FrontSide,
+        depthWrite: true,
+        depthTest: true
+      });
       const p = mesh(
         group,
         new THREE.PlaneGeometry(w, h),
-        new THREE.MeshBasicMaterial({ map: tex, transparent: true, side: THREE.DoubleSide }),
+        material,
         x, y, z
       );
       p.castShadow = false;
+      p.receiveShadow = false;
+      p.renderOrder = 999;
       return p;
     }
 
@@ -358,7 +489,7 @@ export default function LandlordScene() {
       g.rotation.z = 0.055;
       group.add(g);
       box(g, 2.16, 3.62, 0.22, 0, 0, 0, mat(0x173f2d, { roughness: 0.5 }));
-      panel(g, 1.83, 3.18, tex, 0, 0, 0.091);
+      panel(g, 1.83, 3.18, tex, 0, 0, 0.15);
       box(g, 0.29, 0.025, 0.02, 0, 1.66, 0.105, mat(0x102f25));
       return g;
     }
@@ -418,14 +549,7 @@ export default function LandlordScene() {
     // Listing
     const listing = new THREE.Group();
     scene.add(listing);
-    const listingTex = texture([
-      ['PHÒNG ĐANG TRỐNG', 33, true],
-      ['Ảnh rõ · Thông tin đủ', 26],
-      ['Khách thuê đang quan tâm', 25],
-      ['Xem tin đăng', 28, true]
-    ]);
-    console.log('Listing texture created:', listingTex);
-    console.log('Listing texture image:', listingTex.image);
+    const listingTex = listingTexture();
     const listingPhone = phone(listing, listingTex, 3.35, 2.45, 1.38);
 
     const vacancy = new THREE.Group();
@@ -435,7 +559,7 @@ export default function LandlordScene() {
     panel(
       vacancy,
       1.33, 0.35,
-      texture([['CÒN PHÒNG', 47, true]], { bg: '#3f6b48', ink: '#ffffff' }),
+      texture([['ĐANG CHO THUÊ', 38, true]], { bg: '#466f32', ink: '#ffffff' }),
       0, 0, 0.06
     );
 
@@ -450,7 +574,6 @@ export default function LandlordScene() {
     const utilities = new THREE.Group();
     scene.add(utilities);
     const utilityTex = billTexture();
-    console.log('Bill texture created:', utilityTex);
     const utilityPhone = phone(utilities, utilityTex, 0.8, 2.5, 1.35);
     const billScan = box(
       utilityPhone,
@@ -498,21 +621,21 @@ export default function LandlordScene() {
     const messages = new THREE.Group();
     scene.add(messages);
     const chatTex = chatTexture();
-    console.log('Chat texture created:', chatTex);
     const chatPhone = phone(messages, chatTex, 0.8, 2.5, 1.35);
 
     const replyData = [
-      { x: -3.30, y: 3.70, z: 1.40, side: -1, label: 'NGƯỜI THUÊ', lines: ['Vòi nước bị rò ạ.'], owner: false },
-      { x: 4.70, y: 3.65, z: 1.40, side: 1, label: 'CHỦ TRỌ', lines: ['Mình đã nhận tin.'], owner: true },
-      { x: 4.52, y: 2.62, z: 1.75, side: 1, label: 'CHỦ TRỌ', lines: ['Thợ ghé lúc 16:00.'], owner: true },
-      { x: -3.12, y: 2.67, z: 1.75, side: -1, label: 'NGƯỜI THUÊ', lines: ['Dạ, em có ở nhà.'], owner: false }
+      { x: -3.30, y: 3.70, z: 1.40, side: -1, label: 'NGƯỜI THUÊ', lines: ['Chào anh, vòi nước', 'đang bị rò ạ.'], owner: false },
+      { x: 4.70, y: 3.55, z: 1.40, side: 1, label: 'CHỦ TRỌ', lines: ['Mình đã nhận tin.', 'Thợ sẽ ghé 16:00.'], owner: true },
+      { x: -3.12, y: 2.57, z: 1.75, side: -1, label: 'NGƯỜI THUÊ', lines: ['Dạ, em cảm ơn anh!'], owner: false },
+      { x: 4.52, y: 2.45, z: 1.75, side: 1, label: 'CHỦ TRỌ', lines: ['Chúc bạn', 'một ngày tốt lành.'], owner: true }
     ];
 
     const replies = replyData.map((item) => {
       const g = new THREE.Group();
       messages.add(g);
-      box(g, 2.82, 1.32, 0.12, 0, 0, 0, mat(item.owner ? 0xc6dfb5 : 0xe5e8d9));
-      panel(g, 2.68, 1.18, conversationTexture(item.label, item.lines, item.owner), 0, 0, 0.068);
+      const bubbleHeight = item.lines.length > 1 ? 1.52 : 1.32;
+      box(g, 2.82, bubbleHeight, 0.12, 0, 0, 0, mat(item.owner ? 0xc6dfb5 : 0xffffff));
+      panel(g, 2.68, bubbleHeight - 0.14, conversationTexture(item.label, item.lines, item.owner), 0, 0, 0.068);
       g.rotation.y = 0.18;
       g.rotation.z = item.side * 0.035;
       return { ...item, group: g };

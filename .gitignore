@@ -172,8 +172,8 @@ docker-compose.override.yml
 
 !.env.example
 
-# `dist/` is intentionally NOT ignored.
-# The landing-page branch versions its deployable static files
-# under `dist/`.
+# For GitHub Pages deployment, dist/ is built by CI
+# and should not be committed
+dist/
 
 .worktrees/

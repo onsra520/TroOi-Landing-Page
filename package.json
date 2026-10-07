@@ -19,7 +19,7 @@
   "bugs": {
     "url": "https://github.com/onsra520/TroOi-Landing-Page/issues"
   },
-  "homepage": "https://github.com/onsra520/TroOi-Landing-Page#readme",
+  "homepage": "https://onsra520.github.io/TroOi-Landing-Page",
   "devDependencies": {
     "@tailwindcss/postcss": "^4.3.3",
     "@types/react": "^19.3.0",
