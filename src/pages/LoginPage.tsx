@@ -35,7 +35,7 @@ export default function LoginPage() {
           </h2>
           <p className="intro">Đăng nhập để vào không gian quản lý của bạn trên Trọ Ơi.</p>
 
-          <form onSubmit={onSubmit} noValidate={import.meta.env.DEV}>
+          <form onSubmit={onSubmit} noValidate>
             <div className="field">
               <label htmlFor="email">Email</label>
               <input

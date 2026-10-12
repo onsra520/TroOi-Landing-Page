@@ -29,9 +29,9 @@ const json = (body: unknown): RequestInit => ({
   body: JSON.stringify(body),
 });
 
-// Chỉ khi chạy `npm run dev`: bỏ qua server, đăng nhập luôn thành công với tài khoản demo.
-// Bản build production (import.meta.env.DEV = false) vẫn dùng API thật.
-const DEMO = import.meta.env.DEV;
+// Mặc định: bỏ qua server, đăng nhập luôn thành công với tài khoản demo (GitHub Pages không có backend).
+// Build với VITE_USE_API=true để dùng API thật.
+const DEMO = import.meta.env.VITE_USE_API !== 'true';
 const DEMO_KEY = 'trooi_demo_user';
 
 const demoUser = (email: string): User => ({
