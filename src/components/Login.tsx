@@ -12,9 +12,8 @@ export default function Login() {
     e.preventDefault();
     try {
       await login(email, password);
-      navigate('/dashboard');
+      navigate('/dashboard', { replace: true });
     } catch (err) {
-      // Error được set trong useAuth context
       console.error('Login failed:', err);
     }
   };
@@ -64,8 +63,8 @@ export default function Login() {
         <div className="login-footer">
           <p>
             Chưa có tài khoản?{' '}
-            <a href="/signup" className="link">
-              Đăng ký ngay
+            <a href="/" className="link">
+              Quay lại trang chủ
             </a>
           </p>
         </div>
