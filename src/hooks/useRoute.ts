@@ -4,7 +4,7 @@ export type Route = 'landing' | 'login' | 'dashboard';
 
 const read = (): Route => {
   const hash = window.location.hash;
-  return hash === '#/login' ? 'login' : hash === '#/dashboard' ? 'dashboard' : 'landing';
+  return hash === '#/admin' ? 'login' : hash === '#/dashboard' ? 'dashboard' : 'landing';
 };
 
 export function useRoute() {

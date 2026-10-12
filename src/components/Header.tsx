@@ -1,7 +1,7 @@
 import { useTheme } from '../hooks/useTheme';
 import logoImg from '/trooi-logo-main.png';
 
-export default function Header({ minimal = false }: { minimal?: boolean }) {
+export default function Header() {
   const { theme, toggleTheme } = useTheme();
 
   return (
@@ -31,12 +31,6 @@ export default function Header({ minimal = false }: { minimal?: boolean }) {
             </svg>
           </span>
         </button>
-        
-        {!minimal && (
-          <a className="header-cta" href="#/login">
-            Đăng nhập <span>↗</span>
-          </a>
-        )}
       </div>
     </header>
   );

@@ -23,7 +23,7 @@ export default function LoginPage() {
 
   return (
     <>
-      <Header minimal />
+      <Header />
       <CityBackground />
       <main className="auth-page">
         <section className="auth-card" aria-labelledby="login-title">
