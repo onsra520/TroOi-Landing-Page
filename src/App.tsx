@@ -1,5 +1,3 @@
-import { ThemeProvider } from './hooks/useTheme';
-import { BranchProvider } from './hooks/useBranch';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import StoryScene from './components/StoryScene';
@@ -10,9 +8,7 @@ import BranchUI from './components/BranchUI';
 
 function App() {
   return (
-    <ThemeProvider>
-      <BranchProvider>
-        <div className="min-h-screen">
+    <div className="min-h-screen">
           <a href="#start" className="skip">
             Bỏ qua đến nội dung chính
           </a>
@@ -240,8 +236,6 @@ function App() {
           <Footer />
           <BranchUI />
         </div>
-      </BranchProvider>
-    </ThemeProvider>
   );
 }
 

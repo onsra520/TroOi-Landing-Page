@@ -1,14 +1,17 @@
 import { useTheme } from '../hooks/useTheme';
+import { useAuth } from '../hooks/useAuth';
+import { Link } from 'react-router-dom';
 import logoImg from '/trooi-logo-main.png';
 
 export default function Header() {
   const { theme, toggleTheme } = useTheme();
+  const { isAuthenticated, user, logout } = useAuth();
 
   return (
     <header>
-      <a className="brand" href="#start" aria-label="Trọ Ơi, về đầu trang">
+      <Link to="/" className="brand" aria-label="Trọ Ơi, về đầu trang">
         <img src={logoImg} alt="Trọ Ơi" height="42" />
-      </a>
+      </Link>
       
       <div className="header-actions">
         <button
@@ -32,9 +35,26 @@ export default function Header() {
           </span>
         </button>
         
-        <a className="header-cta" href="#app">
-          Gặp Trọ Ơi <span>↗</span>
-        </a>
+        {isAuthenticated ? (
+          <div className="header-user">
+            <span className="user-name">{user?.name}</span>
+            <Link to="/dashboard" className="header-link">
+              Dashboard
+            </Link>
+            <button onClick={logout} className="header-logout">
+              Đăng xuất
+            </button>
+          </div>
+        ) : (
+          <>
+            <Link to="/login" className="header-link">
+              Đăng nhập
+            </Link>
+            <a className="header-cta" href="#app">
+              Gặp Trọ Ơi <span>↗</span>
+            </a>
+          </>
+        )}
       </div>
     </header>
   );
