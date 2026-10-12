@@ -1,12 +1,12 @@
 import { useTheme } from '../hooks/useTheme';
 import logoImg from '/trooi-logo-main.png';
 
-export default function Header() {
+export default function Header({ minimal = false }: { minimal?: boolean }) {
   const { theme, toggleTheme } = useTheme();
 
   return (
     <header>
-      <a className="brand" href="#start" aria-label="Trọ Ơi, về đầu trang">
+      <a className="brand" href="#start" aria-label="Trọ Ơi, về trang chủ">
         <img src={logoImg} alt="Trọ Ơi" height="42" />
       </a>
       
@@ -32,9 +32,11 @@ export default function Header() {
           </span>
         </button>
         
-        <a className="header-cta" href="#app">
-          Gặp Trọ Ơi <span>↗</span>
-        </a>
+        {!minimal && (
+          <a className="header-cta" href="#/login">
+            Đăng nhập <span>↗</span>
+          </a>
+        )}
       </div>
     </header>
   );

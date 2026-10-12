@@ -176,4 +176,7 @@ docker-compose.override.yml
 # and should not be committed
 dist/
 
+# Dữ liệu người dùng (chứa hash mật khẩu), không commit
+server/data/
+
 .worktrees/

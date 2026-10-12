@@ -7,8 +7,19 @@ import RolesScene from './components/RolesScene';
 import LandlordScene from './components/LandlordScene';
 import RoleSwitch from './components/RoleSwitch';
 import BranchUI from './components/BranchUI';
+import LoginPage from './pages/LoginPage';
+import DashboardPage from './pages/DashboardPage';
+import { useRoute } from './hooks/useRoute';
 
 function App() {
+  const route = useRoute();
+
+  if (route !== 'landing') {
+    return (
+      <ThemeProvider>{route === 'login' ? <LoginPage /> : <DashboardPage />}</ThemeProvider>
+    );
+  }
+
   return (
     <ThemeProvider>
       <BranchProvider>
